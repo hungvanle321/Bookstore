@@ -1,7 +1,7 @@
 ﻿using Bookstore.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bookstore.Data
+namespace Bookstore.DataAccess.Data
 {
 	public class ApplicationDbContext: DbContext
 	{
@@ -12,8 +12,8 @@ namespace Bookstore.Data
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<Language>().HasData(
-					new Language { LanguageName = "English" },
-					new Language { LanguageName = "Vietnamese" }
+					new Language { LanguageId=1, LanguageName = "English" },
+					new Language { LanguageId = 2, LanguageName = "Vietnamese" }
 				);
 		}
 	}
