@@ -1,0 +1,111 @@
+﻿@model BookEditViewModel
+<div class="container">
+	<form method="post" enctype="multipart/form-data">
+		<input asp-for="Book.BookId" hidden />
+		<input asp-for="Book.ImageUrl" hidden />
+		<div class="border p-3 mt-4">
+			<div class="row pb-2">
+				<h2 class="text-dark">@(!string.IsNullOrEmpty(Model.Book.BookId) ? "Update" : "Create") Book</h2>
+				<hr />
+			</div>
+			<div class="mb-3 row p-1">
+				<label asp-for="Book.Title" class="p-0"></label>
+				<input asp-for="Book.Title" class="form-control border-0 shadow" />
+				<span asp-validation-for="Book.Title" class="text-danger"></span>
+			</div>
+			<div class="mb-3 row p-1">
+				<label asp-for="Book.Description" class="p-0"></label>
+				<textarea asp-for="Book.Description" class="form-control border-0 shadow"></textarea>
+				<span asp-validation-for="Book.Description" class="text-danger"></span>
+			</div>
+			<div class="mb-3 row p-1">
+				<label asp-for="Book.Author" class="p-0"></label>
+				<input asp-for="Book.Author" class="form-control border-0 shadow" />
+				<span asp-validation-for="Book.Author" class="text-danger"></span>
+			</div>
+			<div class="mb-3 row p-1">
+				<label asp-for="Book.ISBN" class="p-0"></label>
+				<input asp-for="Book.ISBN" class="form-control border-0 shadow" />
+				<span asp-validation-for="Book.ISBN" class="text-danger"></span>
+			</div>
+			<div class="mb-3 row p-1">
+				<label asp-for="Book.OriginPrice" class="p-0"></label>
+				<input asp-for="Book.OriginPrice" class="form-control border-0 shadow" />
+				<span asp-validation-for="Book.OriginPrice" class="text-danger"></span>
+			</div>
+			<div class="mb-3 row p-1">
+				<label asp-for="Book.DiscountPrice" class="p-0"></label>
+				<input asp-for="Book.DiscountPrice" class="form-control border-0 shadow" />
+				<span asp-validation-for="Book.DiscountPrice" class="text-danger"></span>
+			</div>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-6">
+						<div class="row mb-3 p-1">
+							<label asp-for="Book.CategoryID" class="p-0"></label>
+							<select asp-for="Book.CategoryID" asp-items="@Model.CategoryList" class="form-select border-0 shadow">
+								<option disabled selected>--Select Category--</option>
+							</select>
+							<span asp-validation-for="Book.CategoryID" class="text-danger"></span>
+						</div>
+						<div class="row mb-3 p-1">
+							<label asp-for="Book.ImageUrl" class="p-0"></label>
+							<input type="file" name="file" id="bookImage" class="form-control border-0 shadow" />
+						</div>
+					</div>
+					<div class="col-2"></div>
+					<div class="col-4 d-flex">
+						<img id="imgPreview" src="@Model.Book.ImageUrl" style="width:100%; border-radius:5px; border:1px solid #bbb9b9" class="img-fluid" />
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6 col-md-3">
+					<button type="submit" class="btn btn-dark form-control">@(!string.IsNullOrEmpty(Model.Book.BookId) ? "Update" : "Create")</button>
+				</div>
+				<div class="col-6 col-md-3">
+					<a asp-controller="Book" asp-action="Index" class="btn btn-outline-dark text-dark form-control">
+						Back To List
+					</a>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+@section Scripts{
+	@{
+		<partial name="_ValidationScriptsPartial"/>
+	}
+
+	<script>
+		$(document).ready(() => {
+			$("#bookImage").change(function () {
+				const file = this.files[0];
+				if (file) {
+					let reader = new FileReader();
+					reader.onload = function (event) {
+						$("#imgPreview")
+							.attr("src", event.target.result);
+					};
+					reader.readAsDataURL(file);
+				}
+			});
+		});
+	</script>
+	<script>
+		tinymce.init({
+			selector: 'textarea',
+			plugins: 'ai tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
+			toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+			tinycomments_mode: 'embedded',
+			tinycomments_author: 'Author name',
+			mergetags_list: [
+				{ value: 'First.Name', title: 'First Name' },
+				{ value: 'Email', title: 'Email' },
+			],
+			ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant"))
+		});
+	</script>
+}

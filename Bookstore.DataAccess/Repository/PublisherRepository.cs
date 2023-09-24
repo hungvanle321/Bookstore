@@ -1,8 +1,8 @@
 ﻿using Bookstore.DataAccess.Data;
 using Bookstore.Models;
-using MyWeb.DataAccess.Repository.IRepository;
+using Bookstore.DataAccess.Repository.IRepository;
 
-namespace MyWeb.DataAccess.Repository
+namespace Bookstore.DataAccess.Repository
 {
 	public class PublisherRepository : Repository<Publisher>, IPublisherRepository
 	{

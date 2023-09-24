@@ -3,7 +3,7 @@ using Bookstore.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Bookstore.DataAccess.Repository.IRepository;
 
-namespace MyWeb.DataAccess.Repository
+namespace Bookstore.DataAccess.Repository
 {
 	public class Repository<T> : IRepository<T> where T : class
 	{

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Bookstore.Models;
 
 namespace Bookstore.DataAccess.Data
 {
@@ -11,6 +12,9 @@ namespace Bookstore.DataAccess.Data
 		public DbSet<Book> Books { get; set; }
 		public DbSet<Language> Languages { get; set; }
 		public DbSet<Publisher> Publishers { get; set; }
+		public DbSet<Category> Categories { get; set; }
+		public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+		public DbSet<ShoppingCart> ShoppingCarts { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);

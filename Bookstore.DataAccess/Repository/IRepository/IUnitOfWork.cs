@@ -1,4 +1,4 @@
-﻿using MyWeb.DataAccess.Repository.IRepository;
+﻿using Bookstore.DataAccess.Repository.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,8 @@ namespace Bookstore.DataAccess.Repository.IRepository
         IBookRepository BookRepo { get; }
         ILanguageRepository LanguageRepo { get; }
         IPublisherRepository PublisherRepo { get; }
-
-        Task SaveAsync();
+		ICategoryRepository CategoryRepo { get; }
+        IShoppingCartRepository ShoppingCartRepo { get; }
+		Task SaveAsync();
     }
 }

@@ -24,8 +24,4 @@
     <ProjectReference Include="..\Bookstore.Utility\Bookstore.Utility.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\Admin\Controllers\" />
-  </ItemGroup>
-
 </Project>

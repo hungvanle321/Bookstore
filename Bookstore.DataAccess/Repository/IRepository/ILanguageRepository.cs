@@ -1,7 +1,7 @@
 ﻿using Bookstore.DataAccess.Repository.IRepository;
 using Bookstore.Models;
 
-namespace MyWeb.DataAccess.Repository.IRepository
+namespace Bookstore.DataAccess.Repository.IRepository
 {
 	public interface ILanguageRepository : IRepository<Language>
 	{

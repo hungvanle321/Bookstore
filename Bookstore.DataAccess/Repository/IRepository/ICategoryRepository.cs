@@ -3,8 +3,8 @@ using Bookstore.Models;
 
 namespace Bookstore.DataAccess.Repository.IRepository
 {
-	public interface IPublisherRepository : IRepository<Publisher>
+	public interface ICategoryRepository : IRepository<Category>
 	{
-		void Update(Publisher publisher);
+		void Update(Category category);
 	}
 }

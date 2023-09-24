@@ -36,5 +36,15 @@ namespace Bookstore.Models
 		public double OriginPrice { get; set;}
 		[RegularExpression("^\\d+(\\.\\d{1,2})?$", ErrorMessage = "Please enter a valid number with up to two decimal places")]
 		public double DiscountPrice { get; set; }
+		[Display(Name = "Product Image")]
+		[ValidateNever]
+		public string ImageUrl { get; set; }
+		[Required]
+		public string Author { get; set; }
+		[Required(ErrorMessage = "The Category is required !")]
+		public int CategoryID { get; set; }
+		[ForeignKey("CategoryID")]
+		[ValidateNever]
+		public Category Category { get; set; }
 	}
 }
