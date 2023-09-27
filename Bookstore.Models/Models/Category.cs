@@ -7,23 +7,10 @@ namespace Bookstore.Models
 	public class Category
 	{
 		[Key]
-		[MaxLength(36)]
-		public string CategoryId { get; set; }
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public int CategoryId { get; set; }
 		[Required]
+		[Display(Name = "Name")]
 		public string CategoryName { get; set;}
-	}
-
-	public class Book_Category
-	{
-		[MaxLength(36)]
-		public string CategoryId { get; set; }
-		[ForeignKey("CategoryId")]
-		[ValidateNever]
-		public Category Category { get; set; }
-		[MaxLength(36)]
-		public string BookId { get; set; }
-		[ForeignKey("BookId")]
-		[ValidateNever]
-		public Book Book { get; set; }
-	}
+    }
 }

@@ -13858,11 +13858,11 @@ textarea.form-control-lg {
     background-color: #f8f5f0;
 }
 
-.alert-light,
-.alert-light a:not(.btn),
-.alert-light .alert-link {
-    color: #3e3f3a;
-}
+    .alert-light,
+    .alert-light a:not(.btn),
+    .alert-light .alert-link {
+        color: #3e3f3a;
+    }
 
 .badge.bg-light {
     color: #3e3f3a;

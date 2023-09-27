@@ -1,11 +1,11 @@
 ﻿@model BookEditViewModel
 <div class="container">
-	<form method="post" enctype="multipart/form-data">
+	<form method="post" enctype="multipart/form-data" onkeydown="return event.key != 'Enter';">
 		<input asp-for="Book.BookId" hidden />
 		<input asp-for="Book.ImageUrl" hidden />
 		<div class="border p-3 mt-4">
 			<div class="row pb-2">
-				<h2 class="text-dark">@(!string.IsNullOrEmpty(Model.Book.BookId) ? "Update" : "Create") Book</h2>
+				<h2 class="text-dark">@(Model.Book.BookId != 0 ? "Update" : "Create") Book</h2>
 				<hr />
 			</div>
 			<div class="mb-3 row p-1">
@@ -27,6 +27,27 @@
 				<label asp-for="Book.ISBN" class="p-0"></label>
 				<input asp-for="Book.ISBN" class="form-control border-0 shadow" />
 				<span asp-validation-for="Book.ISBN" class="text-danger"></span>
+			</div>
+			<div class="row mb-3 p-1">
+				<label asp-for="Book.LanguageId" class="p-0"></label>
+				<select asp-for="Book.LanguageId" asp-items="@Model.LanguageList" class="form-select border-0 shadow">
+					<option disabled selected>--Select Language--</option>
+				</select>
+				<span asp-validation-for="Book.LanguageId" class="text-danger"></span>
+			</div>
+			<div class="mb-3 row p-1">
+				<label asp-for="Book.PagesCount" class="p-0"></label>
+				<input asp-for="Book.PagesCount" class="form-control border-0 shadow" />
+				<span asp-validation-for="Book.PagesCount" class="text-danger"></span>
+			</div>
+			<div class="mb-3 row p-1">
+				<label asp-for="Book.PublicationDate" class="p-0"></label>
+				<input type="date" asp-for="Book.PublicationDateUI" class="form-control border-0 shadow"/>
+			</div>
+			<div class="mb-3 row p-1">
+				<label asp-for="Book.Publisher" class="p-0"></label>
+				<input asp-for="Book.Publisher" class="form-control border-0 shadow" />
+				<span asp-validation-for="Book.Publisher" class="text-danger"></span>
 			</div>
 			<div class="mb-3 row p-1">
 				<label asp-for="Book.OriginPrice" class="p-0"></label>
@@ -51,6 +72,7 @@
 						<div class="row mb-3 p-1">
 							<label asp-for="Book.ImageUrl" class="p-0"></label>
 							<input type="file" name="file" id="bookImage" class="form-control border-0 shadow" />
+							<span asp-validation-for="Book.ImageUrl" class="text-danger"></span>
 						</div>
 					</div>
 					<div class="col-2"></div>
@@ -61,7 +83,7 @@
 			</div>
 			<div class="row">
 				<div class="col-6 col-md-3">
-					<button type="submit" class="btn btn-dark form-control">@(!string.IsNullOrEmpty(Model.Book.BookId) ? "Update" : "Create")</button>
+					<button type="submit" class="btn btn-dark form-control">@(Model.Book.BookId != 0 ? "Update" : "Create")</button>
 				</div>
 				<div class="col-6 col-md-3">
 					<a asp-controller="Book" asp-action="Index" class="btn btn-outline-dark text-dark form-control">

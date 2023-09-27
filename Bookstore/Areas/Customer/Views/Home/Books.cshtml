@@ -1,0 +1,177 @@
+﻿@model BookHomePageViewModel
+@{
+	ViewData["Title"] = "Library";
+}
+
+@if (!Model.BookList.Any() && Model.AuthorList.All(a => !a.IsChecked) && Model.CategoryList.All(c => !c.IsChecked))
+{
+	<div class="d-flex align-items-center justify-content-center" style="height: 80vh;">
+		<div class="text-center text-dark">
+			<i class="bi bi-emoji-frown-fill" style="font-size: 4rem;"></i>
+			<h2>No bookts found</h2>
+			<p>Try finding another bookts.</p>
+		</div>
+	</div>
+}
+else
+{
+	
+	<div class="row books_page">
+		<div class="col-4 col-lg-2">
+			<div class="pt-3 px-3">
+				<div class="text-dark fw-bold pb-3">
+					Search Filter
+				</div>
+				<form asp-area="Customer" asp-controller="Home" asp-action="Books" method="get" id="filterBookForm">
+					<div>By Authors</div>
+					@foreach (var author in Model.AuthorList)
+					{
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" name="authors"
+								   value="@author.Name"
+								   checked="@author.IsChecked"
+								   onclick="this.form.submit()"
+								   id="authorCheckbox-@author.Name">
+							<label class="form-check-label">
+								@author.Name (@author.Count)
+							</label>
+						</div>
+					}
+					<hr class="hr" />
+					<div>By Categories</div>
+					@foreach (var category in Model.CategoryList)
+					{
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" name="categories"
+								   value="@category.Name"
+								   checked="@category.IsChecked"
+								   onclick="this.form.submit()"
+								   id="categoryCheckbox-@category.Name">
+							<label class="form-check-label">
+								@category.Name (@category.Count)
+							</label>
+						</div>
+					}
+					<hr class="hr" />
+					<div>Sort By</div>
+					<select name="sortType" id="sortDropdown" onchange="this.form.submit()" style="border-radius:5px">
+						<option value="">Default</option>
+						<option value="Title_asc">Title: Ascending</option>
+						<option value="Title_desc">Title: Descending</option>
+						<option value="Price_asc">Price: Low to High</option>
+						<option value="Price_desc">Price: High to Low</option>
+					</select>
+					<input type="hidden" name="searchString" id="searchValue" value="">
+					<input type="hidden" name="pageNumber" id="paginationInput" value="">
+				</form>
+			</div>
+		</div>
+		<div class="row col-8 col-lg-10 mt-3">
+			@if (!Model.BookList.Any())
+			{
+				<div class="d-flex align-items-center justify-content-center">
+					<div class="text-center text-dark">
+						<i class="bi bi-emoji-frown-fill" style="font-size: 4rem;"></i>
+						<h2>No books found</h2>
+						<p>Try finding another books.</p>
+					</div>
+				</div>
+			}
+			else
+			{
+				foreach (var book in Model.BookList)
+				{
+					<div class="col-lg-3 col-sm-6 pb-4 d-flex">
+						<div class="row p-2">
+							<div class="card border-0 rounded" >
+								
+								<a asp-action="Details" asp-route-id="@book.BookId">
+									<img src="@book.ImageUrl" class="card-img-top rounded w-100 shadow" style="height: 354px;">
+								</a>
+									 
+								<div class="card-body p-0 pt-2">
+									<a asp-action="Details" asp-route-id="@book.BookId" class="text-decoration-none">
+										<p class="card-title fs-5 text-dark fw-bold mb-0" style="font-family: GT Super Bold, serif;">@book.Title</p>
+									</a>
+									<p class="text-dark mb-0">@book.Author</p>
+									<p class="text-warning text-decoration-line-through mb-0">@book.OriginPrice.ToString("c")</p>
+									<p class="text-warning fw-bold">@book.DiscountPrice.ToString("c")</p>					
+								</div>
+								<div>
+									<a asp-action="Details" asp-route-id="@book.BookId" class="btn btn-primary bg-gradient form-control rounded-4 fw-bold">
+										ADD TO CART
+									</a>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				}
+				<div>
+					@if (Model.BookList.TotalPages > 1)
+					{
+						<ul class="pagination justify-content-center" style="cursor: pointer;">
+							@if (Model.BookList.PageIndex > 1)
+							{
+								<li class="page-item">
+									<a class="page-link bg-transparent border-0" page="1">
+										<i class="fa fa-angle-double-left" aria-hidden="true"></i>
+									</a>
+								</li>
+								<li>
+									<a class="page-link bg-transparent border-0" page="@(Model.BookList.PageIndex-1)">
+										<i class="fa fa-angle-left" aria-hidden="true"></i>
+									</a>
+								</li>
+
+							}
+							@for (var pages = Model.BookList.StartPage; pages <= Model.BookList.EndPage; pages++)
+							{
+								<li class="page-item @(pages == Model.BookList.PageIndex ? "active":"")">
+									<a class="page-link" page="@pages">@pages</a>
+								</li>
+							}
+							@if (Model.BookList.PageIndex < Model.BookList.TotalPages)
+							{
+								<li>
+									<a class="page-link bg-transparent border-0" page="@(Model.BookList.PageIndex+1)">
+										<i class="fa fa-angle-right" aria-hidden="true"></i>
+									</a>
+								</li>
+								<li>
+									<a class="page-link bg-transparent border-0" page="@Model.BookList.TotalPages">
+										<i class="fa fa-angle-double-right" aria-hidden="true"></i>
+									</a>
+								</li>
+							}
+						</ul>
+					}
+
+				</div>
+			}
+
+		</div>
+	</div>
+	
+}
+
+<script>
+	$(document).ready(function () {
+		var searchString = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SearchString));
+		if (searchString) {
+			$("#searchStringInput").val(searchString);
+			$("#searchValue").val(searchString);
+		}
+		else {
+			$("#searchValue").remove();
+		}
+		var sortType = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SortType));
+		$("#sortDropdown").val(sortType);
+
+		$('.pagination .page-link').click(function (e) {
+			e.preventDefault();
+			$("#paginationInput").val($(this).attr('page'));
+			$('#filterBookForm').submit();
+		});
+	});
+</script>

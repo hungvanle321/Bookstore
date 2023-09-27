@@ -22,17 +22,22 @@ namespace Bookstore.Areas.Customer.Controllers
             _unitOfWork = unitOfWork;
         }
 
+		public IActionResult Index()
+		{
+			return View();
+		}
+
 		public async Task<IActionResult> Books(string? searchString, string? sortType, List<string> categories, List<string> authors, int? pageNumber)
 		{
 			IEnumerable<Book> books = await _unitOfWork.BookRepo.GetAllAsync(IncludeProperties: "Category");
-			IEnumerable<Book> searchedProducts;
+			IEnumerable<Book> searchedBooks;
 
 			if (!string.IsNullOrEmpty(searchString))
 			{
 				books = books.Where(p => p.Title.ToUpper().Contains(searchString.ToUpper()));
 			}
 
-			searchedProducts = books;
+			searchedBooks = books;
 
 
 			if (!string.IsNullOrEmpty(sortType))
@@ -52,17 +57,17 @@ namespace Bookstore.Areas.Customer.Controllers
 			if (categories.Count > 0)
 				books = books.Where(p => categories.Contains(p.Category.CategoryName));
 
-			var authorFrequency = ((authors.Count == 0 && categories.Count == 0) ? books : searchedProducts)
+			var authorFrequency = ((authors.Count == 0 && categories.Count == 0) ? books : searchedBooks)
 									.GroupBy(p => p.Author)
 									.Select(g => new { Author = g.Key, Count = g.Count() }).OrderBy(s => s.Author);
 
-			var categoryFrequency = ((authors.Count == 0 && categories.Count == 0) ? books : searchedProducts)
+			var categoryFrequency = ((authors.Count == 0 && categories.Count == 0) ? books : searchedBooks)
 									.GroupBy(p => p.Category.CategoryName)
 									.Select(g => new { CategoryName = g.Key, Count = g.Count() }).OrderBy(s => s.CategoryName);
 
-			int pageSize = 4;
+			int pageSize = 8;
 
-			BookHomePageViewModel productHomePageViewModel = new()
+			BookHomePageViewModel bookHomePageViewModel = new()
 			{
 				BookList = PaginatedList<Book>.Create(books, pageNumber ?? 1, pageSize),
 				AuthorList = authorFrequency.Select(a => new CheckBoxOption()
@@ -82,10 +87,10 @@ namespace Bookstore.Areas.Customer.Controllers
 			};
 
 
-			return View(productHomePageViewModel);
+			return View(bookHomePageViewModel);
 		}
 
-		public async Task<IActionResult> Details(string id)
+		public async Task<IActionResult> Details(int id)
 		{
 			ShoppingCart shoppingCart = new()
 			{
@@ -99,6 +104,7 @@ namespace Bookstore.Areas.Customer.Controllers
 
 		[HttpPost]
 		[Authorize]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Details(ShoppingCart shoppingCart)
 		{
 			var claimedIdentity = (ClaimsIdentity?)User.Identity;

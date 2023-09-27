@@ -4,24 +4,100 @@
 @inject UserManager<IdentityUser> UserManager
 
 <ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-    </li>
-    <li class="nav-item">
-        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
+	@if (SignInManager.IsSignedIn(User))
+	{
+		<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+				<i class="bi bi-person-circle" style="font-size: 24px;"></i>
+			</a>
+			<ul class="dropdown-menu dropdown-menu-end" style="width: 20vw; right:0;" id="userDropdownMenu">
+				<li class="nav-link text-dark">@UserManager.GetUserName(User)</li>
+				<li><hr class="dropdown-divider mx-4"></li>
+				<li class="nav-item mx-2">
+					<a id="manage" class="dropdown-item nav-link text-dark d-flex align-items-center"
+					   asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+						<i class="fa fa-cog mx-2 fa-fw border-round" aria-hidden="true"></i>
+						Account Settings
+					</a>
+
+					@if (User.IsInRole(StaticDetails.Role_Admin))
+					{
+					<li class="nav-item dropstart mx-2" id="managementDropdownItem">
+						<a class="dropdown-item nav-link text-dark d-flex justify-content-between align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+							<div class="d-flex align-items-center align-items-center">
+								<i class="fa fa-list mx-2 fa-fw border-round" aria-hidden="true"></i>
+								Content Management
+							</div>
+							<i class="fa fa-angle-right angle" aria-hidden="true"></i>
+						</a>
+					</li>
+					}
+				<li class="nav-item mx-2">
+					<form id="logoutForm"
+						  asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+						<button id="logout" type="submit" class="dropdown-item nav-link text-dark d-flex align-items-center">
+							<i class="fa fa-sign-out mx-2 fa-fw border-round" aria-hidden="true"></i>
+							Logout
+						</button>
+					</form>
+				</li>
+			</ul>
+			<ul class="dropdown-menu dropdown-menu-end" style="width: 20vw; right:0; " id="managementDropdownMenu">
+				<li class="nav-item mx-3 d-flex align-items-center">
+					<a id="returnUserMenu" class="me-2 text-dark" style="cursor: pointer;">
+						<i class="fa fa-angle-left left-angle fa-2x fa-fw" aria-hidden="true"></i>
+					</a>
+					<span class="fs fw-bold">Management</span>
+				</li>
+				<li class="nav-item mx-2">
+					<a class="dropdown-item nav-link text-dark d-flex align-items-center"
+					   asp-area="Admin" asp-controller="Category" asp-action="Index">
+						<i class="fa fa-list-alt mx-2 fa-fw border-round" aria-hidden="true"></i>
+						Category
+					</a>
+				</li>
+				<li class="nav-item mx-2">
+					<a class="dropdown-item nav-link text-dark d-flex align-items-center"
+					   asp-area="Admin" asp-controller="Book" asp-action="Index">
+						<i class="fa fa-list-alt mx-2 fa-fw border-round" aria-hidden="true"></i>
+						Book
+					</a>
+				</li>
+			</ul>
+		</li>
+	}
+	else
+	{
+		<li class="nav-item">
+			<a class="nav-link text-white" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link text-white" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+		</li>
+	}
 </ul>
+
+<script>
+	$(document).ready(function () {
+		if ($("#managementDropdownItem").length) {
+			$("#managementDropdownItem").click(function () {
+				$("#userDropdownMenu").removeClass('show');
+				$("#managementDropdownMenu").addClass('show');
+			});
+		}
+
+		if ($("#returnUserMenu").length) {
+			$("#returnUserMenu").click(function () {
+				$("#userDropdownMenu").addClass('show');
+				$("#managementDropdownMenu").removeClass('show');
+			});
+		}
+
+		$(document).click(function (event) {
+			var target = $(event.target);
+			if (!target.closest('.dropdown').length && $('.dropdown .dropdown-menu').hasClass('show')) {
+				$('.navbar-nav .dropdown .dropdown-menu').removeClass('show');
+			}
+		});
+	});
+</script>

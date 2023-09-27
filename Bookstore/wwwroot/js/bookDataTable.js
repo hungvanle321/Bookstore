@@ -8,13 +8,14 @@ function GetDataTableData() {
     dataTable = $('#bookTable').DataTable({
             "ajax": { url: '/Admin/Book/GetDataFromAPI' },
             "columns": [
-                { data: 'title', "width": "35%" },
-                { data: 'authors', "width": "20%" },
-                { data: 'isbn', "width": "10%" }, 
-                { data: 'price', "width": "5%" },
-                { data: 'category.name', "width":"20%" },
+                { data: 'title', "width": "30%" },
+                { data: 'author', "width": "15%", className: "text-center" },
+                { data: 'publisher', "width": "10%" }, 
+                { data: 'language.languageName', "width": "10%" },
+                { data: 'discountPrice', "width": "10%" },
+                { data: 'category.categoryName', "width":"15%" },
                 {
-                    data: 'id',
+                    data: 'bookId',
                     "render": function (data) {
                         return `<a href="/admin/book/createandedit?id=${data}" class="btn btn-dark mx-1" data-toggle="tooltip" title="Edit">
 								    <i class="bi bi-pencil-square"></i>
@@ -23,7 +24,8 @@ function GetDataTableData() {
 								    <i class="bi bi-trash-fill"></i>
 							    </a>`
                     },
-                    "width": "10%"
+                    "width": "10%",
+                    className: "text-center"
                 }
             ]
         });

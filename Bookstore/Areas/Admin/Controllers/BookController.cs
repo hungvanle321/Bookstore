@@ -7,7 +7,7 @@ using Bookstore.Models.ViewModel;
 using Bookstore.Utility;
 using System.Data;
 
-namespace MyWeb.Areas.Admin.Controllers
+namespace Bookstore.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = StaticDetails.Role_Admin)]
@@ -25,18 +25,21 @@ namespace MyWeb.Areas.Admin.Controllers
 			return View();
 		}
 
-		public async Task<IActionResult> CreateAndEdit(string? id)
+		public async Task<IActionResult> CreateAndEdit(int? id)
         {
 			BookEditViewModel bookVM = new()
 			{
 				CategoryList = (await _unitOfWork.CategoryRepo.GetAllAsync()).Select(
-				u => new SelectListItem { Text = u.CategoryName, Value = u.CategoryId }
+				u => new SelectListItem { Text = u.CategoryName, Value = u.CategoryId.ToString() }
 				),
-				Book = new Book()
+				LanguageList = (await _unitOfWork.LanguageRepo.GetAllAsync()).Select(
+				u => new SelectListItem { Text = u.LanguageName, Value = u.LanguageId.ToString() }
+				),
+				Book = new Book() { PublicationDateUI = DateTime.Now }
 			};
 
 
-            if (string.IsNullOrEmpty(id))
+            if (id == null)
             {
                 //Create
                 return View(bookVM);
@@ -49,12 +52,18 @@ namespace MyWeb.Areas.Admin.Controllers
 		}
 
         [HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> CreateAndEdit(BookEditViewModel bookVM, IFormFile? file)
 		{
             //Validation
 			if (bookVM.Book.OriginPrice < bookVM.Book.DiscountPrice)
 			{
-				ModelState.AddModelError("Book.DiscountPrice", "The discount price cannot be greater than original.");
+				ModelState.AddModelError("Book.DiscountPrice", "The discount price cannot be greater than original");
+			}
+			
+			if (file !=null && (file.Length ==0 || !file.ContentType.Contains("image")))
+			{
+				ModelState.AddModelError("Book.ImageUrl", "The selected file is not a valid image file");
 			}
 
 			if (ModelState.IsValid)
@@ -83,7 +92,9 @@ namespace MyWeb.Areas.Admin.Controllers
 				}
 				else bookVM.Book.ImageUrl = "";
 
-                if (string.IsNullOrEmpty(bookVM.Book.BookId))
+				bookVM.Book.PublicationDate = DateOnly.FromDateTime(bookVM.Book.PublicationDateUI);
+
+                if (bookVM.Book.BookId == 0)
                 {
 					await _unitOfWork.BookRepo.AddAsync(bookVM.Book);
 					await _unitOfWork.SaveAsync();
@@ -103,6 +114,9 @@ namespace MyWeb.Areas.Admin.Controllers
 				bookVM.CategoryList = (await _unitOfWork.CategoryRepo.GetAllAsync()).Select(
 				u => new SelectListItem { Text = u.CategoryName, Value = u.CategoryId.ToString() }
 				);
+				bookVM.LanguageList = (await _unitOfWork.LanguageRepo.GetAllAsync()).Select(
+				u => new SelectListItem { Text = u.LanguageName, Value = u.LanguageId.ToString() }
+				);
 				return View(bookVM);
 			}
 
@@ -111,12 +125,12 @@ namespace MyWeb.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetDataFromAPI()
         {
-			List<Book> objBookList = (await _unitOfWork.BookRepo.GetAllAsync(IncludeProperties: "Category")).ToList();
+			List<Book> objBookList = (await _unitOfWork.BookRepo.GetAllAsync(IncludeProperties: "Category,Language")).ToList();
             return Json(new {data= objBookList });
 		}
 
 		[HttpDelete]
-		public async Task<IActionResult> Delete(string? id)
+		public async Task<IActionResult> Delete(int? id)
 		{
 			var book = await _unitOfWork.BookRepo.GetAsync(p=> p.BookId == id);
 			if (book == null)

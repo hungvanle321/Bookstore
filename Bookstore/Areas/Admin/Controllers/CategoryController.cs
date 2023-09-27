@@ -1,13 +1,11 @@
-﻿using Bookstore.DataAccess.Data;
-using Bookstore.Models;
+﻿using Bookstore.Models;
 using Microsoft.AspNetCore.Mvc;
 using Bookstore.DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Bookstore.Utility;
-using Bookstore.Models;
-using Bookstore.DataAccess.Repository.IRepository;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace MyWeb.Areas.Admin.Controllers
+namespace Bookstore.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = StaticDetails.Role_Admin)]
@@ -18,84 +16,70 @@ namespace MyWeb.Areas.Admin.Controllers
         {
             _unitOfWork = db;
         }
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
+        {
+            return View();
+        }
+        [HttpPost]
+		public async Task<IActionResult> Create(string inputValue)
+        {
+			try
+			{
+				Category category = new()
+                {
+                    CategoryName = inputValue
+                };
+				await _unitOfWork.CategoryRepo.AddAsync(category);
+				await _unitOfWork.SaveAsync();
+				return Json(new { success = true, message = "Category created successfully!" });
+			}
+			catch (Exception ex)
+			{
+				return Json(new { success = false, message = "An error occurred: " + ex.Message });
+			}
+		}
+
+        [HttpPut]
+        public async Task<IActionResult> Edit(int? id, string inputValue)
+        {
+			var category = await _unitOfWork.CategoryRepo.GetAsync(p => p.CategoryId == id);
+			if (category == null)
+			{
+				return Json(new { success = false, message = "Error while editing" });
+			}
+
+            category.CategoryName = inputValue;
+			_unitOfWork.CategoryRepo.Update(category);
+			await _unitOfWork.SaveAsync();
+			return Json(new { success = true, message = "Category edited successfully!" });
+		}
+
+		[HttpGet]
+        public async Task<IActionResult> GetDataFromAPI()
         {
             List<Category> objCategoryList = (await _unitOfWork.CategoryRepo.GetAllAsync()).ToList();
-            return View(objCategoryList);
+            return Json(new { data = objCategoryList });
         }
 
-        public IActionResult Create()
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int? id)
         {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(Category obj)
-        {
-            if (ModelState.IsValid)
-            {
-                await _unitOfWork.CategoryRepo.AddAsync(obj);
-                await _unitOfWork.SaveAsync();
-                TempData["success"] = "Category created successfully";
-                return RedirectToAction("Index");
-            }
-            return View();
-        }
-
-        public async Task<IActionResult> Edit(string? id)
-        {
-            if (string.IsNullOrEmpty(id))
-            {
-                return NotFound();
-            }
-            Category category = await _unitOfWork.CategoryRepo.GetAsync(c => c.CategoryId == id);
-
+            var category = await _unitOfWork.CategoryRepo.GetAsync(p => p.CategoryId == id);
             if (category == null)
             {
-                return NotFound();
+                return Json(new { success = false, message = "Error while deleting" });
             }
-            return View(category);
-        }
 
-        [HttpPost]
-        public async Task<IActionResult> Edit(Category obj)
-        {
-            if (ModelState.IsValid)
+            var books = await _unitOfWork.BookRepo.GetAsync(b => b.CategoryID == id);
+            if (books != null)
             {
-                _unitOfWork.CategoryRepo.Update(obj);
-                await _unitOfWork.SaveAsync();
-                TempData["success"] = "Category updated successfully";
-                return RedirectToAction("Index");
-            }
-            return View();
-        }
+				return Json(new { success = false, message = "Please remove all books from this category before attempting to delete it" });
+			}
 
-        public async Task<IActionResult> Delete(string? id)
-        {
-            if (string.IsNullOrEmpty(id))
-            {
-                return NotFound();
-            }
-            Category category = await _unitOfWork.CategoryRepo.GetAsync(c => c.CategoryId == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-            return View(category);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeletePOST(string? id)
-        {
-            Category category = await _unitOfWork.CategoryRepo.GetAsync(c => c.CategoryId == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
             _unitOfWork.CategoryRepo.Remove(category);
             await _unitOfWork.SaveAsync();
-            TempData["success"] = "Category removed successfully";
-            return RedirectToAction("Index");
+
+            return Json(new { success = true, message = "Deleted successfully !" });
         }
     }
 }
