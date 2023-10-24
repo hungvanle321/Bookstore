@@ -21,8 +21,12 @@ namespace Bookstore.Models.ViewModel
 		public PaginatedList<Book> BookList { get; set; }
 		public IEnumerable<CheckBoxOption> CategoryList { get; set; }
 		public IEnumerable<CheckBoxOption> AuthorList { get; set; }
+		public IEnumerable<CheckBoxOption> PublisherList { get; set; }
 
 		public string? SearchString { get; set; }
 		public string? SortType { get; set; }
+
+		public double ? MaxPrice { get; set; }
+		public double? MinPrice { get; set;}
 	}
 }

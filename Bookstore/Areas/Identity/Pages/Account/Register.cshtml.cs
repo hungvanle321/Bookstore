@@ -171,7 +171,7 @@ namespace Bookstore.Areas.Identity.Pages.Account
 				await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
 				await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
-
+				user.AvatarPath = "";
 				var result = await _userManager.CreateAsync(user, Input.Password);
 
 				if (result.Succeeded)

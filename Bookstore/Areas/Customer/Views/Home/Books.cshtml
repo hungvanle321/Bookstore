@@ -3,159 +3,347 @@
 	ViewData["Title"] = "Library";
 }
 
-@if (!Model.BookList.Any() && Model.AuthorList.All(a => !a.IsChecked) && Model.CategoryList.All(c => !c.IsChecked))
-{
-	<div class="d-flex align-items-center justify-content-center" style="height: 80vh;">
-		<div class="text-center text-dark">
-			<i class="bi bi-emoji-frown-fill" style="font-size: 4rem;"></i>
-			<h2>No bookts found</h2>
-			<p>Try finding another bookts.</p>
-		</div>
-	</div>
-}
-else
-{
-	
-	<div class="row books_page">
-		<div class="col-4 col-lg-2">
-			<div class="pt-3 px-3">
-				<div class="text-dark fw-bold pb-3">
-					Search Filter
-				</div>
-				<form asp-area="Customer" asp-controller="Home" asp-action="Books" method="get" id="filterBookForm">
-					<div>By Authors</div>
-					@foreach (var author in Model.AuthorList)
-					{
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" name="authors"
-								   value="@author.Name"
-								   checked="@author.IsChecked"
-								   onclick="this.form.submit()"
-								   id="authorCheckbox-@author.Name">
-							<label class="form-check-label">
-								@author.Name (@author.Count)
-							</label>
-						</div>
-					}
-					<hr class="hr" />
-					<div>By Categories</div>
-					@foreach (var category in Model.CategoryList)
-					{
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" name="categories"
-								   value="@category.Name"
-								   checked="@category.IsChecked"
-								   onclick="this.form.submit()"
-								   id="categoryCheckbox-@category.Name">
-							<label class="form-check-label">
-								@category.Name (@category.Count)
-							</label>
-						</div>
-					}
-					<hr class="hr" />
-					<div>Sort By</div>
-					<select name="sortType" id="sortDropdown" onchange="this.form.submit()" style="border-radius:5px">
-						<option value="">Default</option>
-						<option value="Title_asc">Title: Ascending</option>
-						<option value="Title_desc">Title: Descending</option>
-						<option value="Price_asc">Price: Low to High</option>
-						<option value="Price_desc">Price: High to Low</option>
-					</select>
-					<input type="hidden" name="searchString" id="searchValue" value="">
-					<input type="hidden" name="pageNumber" id="paginationInput" value="">
-				</form>
+<div class="row books_page">
+	<div class="col-4 col-lg-2">
+		<div class="pt-3 px-3">
+			<div class="text-dark fw-bold pb-3">
+				Search Filter
 			</div>
-		</div>
-		<div class="row col-8 col-lg-10 mt-3">
-			@if (!Model.BookList.Any())
-			{
-				<div class="d-flex align-items-center justify-content-center">
-					<div class="text-center text-dark">
-						<i class="bi bi-emoji-frown-fill" style="font-size: 4rem;"></i>
-						<h2>No books found</h2>
-						<p>Try finding another books.</p>
-					</div>
-				</div>
-			}
-			else
-			{
-				foreach (var book in Model.BookList)
-				{
-					<div class="col-lg-3 col-sm-6 pb-4 d-flex">
-						<div class="row p-2">
-							<div class="card border-0 rounded" >
-								
-								<a asp-action="Details" asp-route-id="@book.BookId">
-									<img src="@book.ImageUrl" class="card-img-top rounded w-100 shadow" style="height: 354px;">
-								</a>
-									 
-								<div class="card-body p-0 pt-2">
-									<a asp-action="Details" asp-route-id="@book.BookId" class="text-decoration-none">
-										<p class="card-title fs-5 text-dark fw-bold mb-0" style="font-family: GT Super Bold, serif;">@book.Title</p>
-									</a>
-									<p class="text-dark mb-0">@book.Author</p>
-									<p class="text-warning text-decoration-line-through mb-0">@book.OriginPrice.ToString("c")</p>
-									<p class="text-warning fw-bold">@book.DiscountPrice.ToString("c")</p>					
+			<form asp-area="Customer" asp-controller="Home" asp-action="Books" method="get" id="filterBookForm">
+				<dl>
+					<dt>By Authors</dt>
+					<dd>
+						<div class="form-check-group" style="max-height: 240px; overflow-y: hidden;">
+							@foreach (var author in Model.AuthorList)
+							{
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" name="authors"
+										   value="@author.Name"
+										   checked="@author.IsChecked"
+										   onclick="this.form.submit()"
+										   id="authorCheckbox-@author.Name">
+									<label class="form-check-label" for="authorCheckbox-@author.Name">
+										@author.Name (@author.Count)
+									</label>
 								</div>
-								<div>
-									<a asp-action="Details" asp-route-id="@book.BookId" class="btn btn-primary bg-gradient form-control rounded-4 fw-bold">
-										ADD TO CART
-									</a>
-								</div>
-							</div>
-							
+							}
 						</div>
-					</div>
-				}
-				<div>
-					@if (Model.BookList.TotalPages > 1)
-					{
-						<ul class="pagination justify-content-center" style="cursor: pointer;">
-							@if (Model.BookList.PageIndex > 1)
+						@if (Model.AuthorList.Count() > 9)
+						{
+							<strong class="d-flex justify-content-center" onclick="toggleContent('.form-check-group', this)">See more ▼</strong>
+						}
+					</dd>
+				</dl>
+				<hr class="hr" />
+				<dl>
+					<dt>By Categories</dt>
+					<dd>
+						<div class="form-check-group" style="max-height: 240px; overflow-y: hidden;">
+							@foreach (var category in Model.CategoryList)
 							{
-								<li class="page-item">
-									<a class="page-link bg-transparent border-0" page="1">
-										<i class="fa fa-angle-double-left" aria-hidden="true"></i>
-									</a>
-								</li>
-								<li>
-									<a class="page-link bg-transparent border-0" page="@(Model.BookList.PageIndex-1)">
-										<i class="fa fa-angle-left" aria-hidden="true"></i>
-									</a>
-								</li>
-
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" name="categories"
+										   value="@category.Name"
+										   checked="@category.IsChecked"
+										   onclick="this.form.submit()"
+										   id="categoryCheckbox-@category.Name">
+									<label class="form-check-label" for="categoryCheckbox-@category.Name">
+										@category.Name (@category.Count)
+									</label>
+								</div>
 							}
-							@for (var pages = Model.BookList.StartPage; pages <= Model.BookList.EndPage; pages++)
+						</div>
+						@if (Model.CategoryList.Count() > 9)
+						{
+							<strong class="d-flex justify-content-center" onclick="toggleContent('.form-check-group')">See more ▼</strong>
+						}
+					</dd>
+				</dl>
+				<hr class="hr" />
+				<dl>
+					<dt>By Publishers</dt>
+					<dd>
+						<div class="form-check-group" style="max-height: 240px; overflow-y: hidden;">
+							@foreach (var publisher in Model.PublisherList)
 							{
-								<li class="page-item @(pages == Model.BookList.PageIndex ? "active":"")">
-									<a class="page-link" page="@pages">@pages</a>
-								</li>
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" name="publishers"
+										   value="@publisher.Name"
+										   checked="@publisher.IsChecked"
+										   onclick="this.form.submit()"
+										   id="publisherCheckbox-@publisher.Name">
+									<label class="form-check-label" for="publisherCheckbox-@publisher.Name">
+										@publisher.Name (@publisher.Count)
+									</label>
+								</div>
 							}
-							@if (Model.BookList.PageIndex < Model.BookList.TotalPages)
-							{
-								<li>
-									<a class="page-link bg-transparent border-0" page="@(Model.BookList.PageIndex+1)">
-										<i class="fa fa-angle-right" aria-hidden="true"></i>
-									</a>
-								</li>
-								<li>
-									<a class="page-link bg-transparent border-0" page="@Model.BookList.TotalPages">
-										<i class="fa fa-angle-double-right" aria-hidden="true"></i>
-									</a>
-								</li>
-							}
-						</ul>
-					}
-
+						</div>
+						@if (Model.AuthorList.Count() > 9)
+						{
+							<strong class="d-flex justify-content-center" onclick="toggleContent('.form-check-group', this)">See more ▼</strong>
+						}
+					</dd>
+				</dl>
+				<hr class="hr" />
+				<div>Sort By</div>
+				<select name="sortType" id="sortDropdown" onchange="this.form.submit()" style="border-radius:5px">
+					<option value="">Default</option>
+					<option value="Title_asc">Title: Ascending</option>
+					<option value="Title_desc">Title: Descending</option>
+					<option value="Price_asc">Price: Low to High</option>
+					<option value="Price_desc">Price: High to Low</option>
+				</select>
+				<hr class="hr" />
+				<div>Price</div>
+				<div class="d-flex price-input">
+					<input class="col-5 input-min text-center" name="lower_price" type="text" value="@(Model.MinPrice != null ? Model.MinPrice.Value.ToString("F2") : "0.00")">
+					<span class="col-2 text-center"> - </span>
+					<input class="col-5 input-max text-center" name="upper_price" type="text" value="@(Model.MaxPrice != null ? Model.MaxPrice.Value.ToString("F2") : "0.00")">
 				</div>
-			}
-
+				<div class="slider">
+					<div class="progress"></div>
+				</div>
+				<div class="range-input py-3">
+					<input type="range" class="range-min" min="0.00" max="200" value="0.00" step="0.01">
+					<input type="range" class="range-max" min="0.00" max="200" value="0.00" step="0.01">
+				</div>
+				<div id="validation-range" class="text-danger"></div>
+				<input type="hidden" name="searchString" id="searchValue" value="">
+				<input type="hidden" name="pageNumber" id="paginationInput" value="">
+			</form>
 		</div>
 	</div>
-	
-}
+	<div class="row col-8 col-lg-10 mt-3 flex-wrap align-content-start">
+		@if (!Model.BookList.Any())
+		{
+			<div class="d-flex align-items-center justify-content-center" style="position:absolute; top: 25%;">
+				<div class="text-center text-dark">
+					<i class="bi bi-emoji-frown-fill" style="font-size: 4rem;"></i>
+					<h2>No books found</h2>
+					<p>Try finding another books.</p>
+				</div>
+			</div>
+		}
+		else
+		{
+			foreach (var book in Model.BookList)
+			{
+				<div class="col-lg-3 col-sm-6 pb-4">
+					<div class="row p-2">
+						<div class="card border-1 p-3 rounded background-book">
+							<a asp-action="Details" asp-route-id="@book.BookId">
+								<img src="@book.ImageUrl" class="card-img-top rounded w-100 shadow">
+							</a>
 
+							<div class="card-body p-0 pt-2">
+								<a asp-action="Details" asp-route-id="@book.BookId" class="text-decoration-none">
+									<p class="card-title fs-5 fw-bold mb-0">@book.Title</p>
+								</a>
+								<p class="text-dark mb-0">@book.Author</p>
+								<p class="text-warning text-decoration-line-through mb-0">@book.OriginPrice.ToString("c")</p>
+								<p class="text-warning fw-bold">@book.DiscountPrice.ToString("c")</p>
+							</div>
+							<div>
+								<a onClick="AddBookToCart('/Customer/Home/AddToCart', @book.BookId)" class="btn btn-primary bg-gradient border-0 form-control rounded-4 fw-bold">
+									<i class="bi bi-cart"></i>&nbsp;&nbsp;ADD TO CART
+								</a>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			}
+			<div>
+				@if (Model.BookList.TotalPages > 1)
+				{
+					<ul class="pagination justify-content-center" style="cursor: pointer;">
+						@if (Model.BookList.PageIndex > 1)
+						{
+							<li class="page-item">
+								<a class="page-link bg-transparent border-0" page="1">
+									<i class="fa fa-angle-double-left" aria-hidden="true"></i>
+								</a>
+							</li>
+							<li>
+								<a class="page-link bg-transparent border-0" page="@(Model.BookList.PageIndex-1)">
+									<i class="fa fa-angle-left" aria-hidden="true"></i>
+								</a>
+							</li>
+
+						}
+						@for (var pages = Model.BookList.StartPage; pages <= Model.BookList.EndPage; pages++)
+						{
+							<li class="page-item @(pages == Model.BookList.PageIndex ? "active":"")">
+								<a class="page-link" page="@pages">@pages</a>
+							</li>
+						}
+						@if (Model.BookList.PageIndex < Model.BookList.TotalPages)
+						{
+							<li>
+								<a class="page-link bg-transparent border-0" page="@(Model.BookList.PageIndex+1)">
+									<i class="fa fa-angle-right" aria-hidden="true"></i>
+								</a>
+							</li>
+							<li>
+								<a class="page-link bg-transparent border-0" page="@Model.BookList.TotalPages">
+									<i class="fa fa-angle-double-right" aria-hidden="true"></i>
+								</a>
+							</li>
+						}
+					</ul>
+				}
+
+			</div>
+		}
+	</div>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script type="text/javascript">
+	toastr.options = {
+		timeOut: 3000,
+		positionClass: "toast-bottom-right"
+	};
+
+	window.toggleContent = function (e, button) {
+		var group = $(button).parent().find(e);
+		if (group.css("max-height") == "240px") {
+			$(button).text('Show less ▲');
+			group.css("max-height", "fit-content");
+		} else {
+			$(button).text('See more ▼');
+			group.css("max-height", "240px");
+		}
+	}
+
+	const rangeInput = $(".range-input input"),
+		priceInput = $(".price-input input"),
+		range = $(".slider .progress");
+	let priceGap = 10;
+
+	priceInput.on("keyup", function (e) {
+		if (e.keyCode === 13) {
+			let minPrice = priceInput.eq(0).val(),
+				maxPrice = priceInput.eq(1).val();
+			let regex = /^\d+(\.\d{1,2})?$/;
+
+			if (regex.test(minPrice) && regex.test(maxPrice)) {
+				minPrice = parseFloat(minPrice);
+				maxPrice = parseFloat(maxPrice);
+
+				if (minPrice > maxPrice) {
+					$('#validation-range').text('Min price cannot be greater than max price');
+					return;
+				}
+
+				if ((maxPrice - minPrice >= priceGap) && maxPrice <= parseFloat(rangeInput.eq(1).attr("max"))) {
+					if ($(this).hasClass("input-min")) {
+						rangeInput.eq(0).val(minPrice);
+						range.css("left", ((minPrice / parseFloat(rangeInput.eq(0).attr("max"))) * 100) + "%");
+					} else if ($(this).hasClass("input-max")) {
+						rangeInput.eq(1).val(maxPrice);
+						range.css("right", 100 - ((maxPrice / parseFloat(rangeInput.eq(1).attr("max"))) * 100) + "%");
+					}
+
+					$('#filterBookForm').submit();
+				}
+			}
+			else {
+				$('#validation-range').text('Invalid price input');
+			}
+
+		}
+	});
+
+	let isMinMouseDown = false;
+	let isMaxMouseDown = false;
+
+	let minPrice = priceInput.eq(0).val(),
+		maxPrice = priceInput.eq(1).val();
+	rangeInput.eq(0).val(minPrice);
+	range.css("left", ((minPrice / parseFloat(rangeInput.eq(0).attr("max"))) * 100) + "%");
+	rangeInput.eq(1).val(maxPrice);
+	range.css("right", 100 - ((maxPrice / parseFloat(rangeInput.eq(1).attr("max"))) * 100) + "%");
+
+	rangeInput.eq(0).on("mousedown", function () {
+		isMinMouseDown = true;
+	});
+
+	rangeInput.eq(1).on("mousedown", function () {
+		isMaxMouseDown = true;
+	});
+
+	$(document).on("input", function (e) {
+		if (isMinMouseDown || isMaxMouseDown) {
+
+			let minVal = parseFloat(rangeInput.eq(0).val()),
+				maxVal = parseFloat(rangeInput.eq(1).val());
+
+			if ((maxVal - minVal) <= priceGap) {
+				if (isMinMouseDown) {
+					rangeInput.eq(0).val(maxVal - priceGap);
+				} 
+				else if (isMaxMouseDown) {
+					rangeInput.eq(1).val(minVal + priceGap);
+				}
+			} 
+			else {
+				priceInput.eq(0).val(minVal);
+				priceInput.eq(1).val(maxVal);
+				range.css("left", ((minVal / rangeInput.eq(0).attr("max")) * 100) + "%");
+				range.css("right", 100 - (maxVal / rangeInput.eq(1).attr("max")) * 100 + "%");
+			}
+		}
+	});
+
+	$(document).on("mouseup.slider", function () {
+		if (isMinMouseDown || isMaxMouseDown) {
+			isMinMouseDown = false;
+			isMaxMouseDown = false;
+
+			$('#filterBookForm').submit();
+			$(document).off(".slider");
+		}
+	});
+</script>
 <script>
+	function AddBookToCart(url, id) {
+		$.ajax({
+			url: url,
+			type: 'POST',
+			dataType: 'json',
+			data: { bookId: id },
+			success: function (data) {
+				if (data.success) {
+					toastr.success(data.message);
+				}
+				else {
+					window.location.href = data.url;
+				}
+
+				$.ajax({
+					url: '/Customer/Home/GetViewComponent',
+					type: 'GET',
+					success: function (data) {
+						$("#cartIcon").html(data);
+						anime({
+							targets: '#cartIcon',
+							scale: [
+								{ value: 1.2, duration: 300, easing: 'easeOutSine' },
+								{ value: 1, duration: 500, easing: 'easeInOutQuad' }
+							]
+						});
+					},
+					error: function (error) {
+
+					}
+				});
+			},
+			error: function (error) {
+				console.log(error);
+			}
+		});
+	}
 	$(document).ready(function () {
 		var searchString = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SearchString));
 		if (searchString) {

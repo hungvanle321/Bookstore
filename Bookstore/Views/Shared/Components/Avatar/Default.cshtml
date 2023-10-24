@@ -1,0 +1,10 @@
+﻿@model string
+@if(string.IsNullOrEmpty(Model))
+{
+	<i class="bi bi-person-circle" style="font-size: 24px;"></i>
+}
+else
+{
+	<img id="avatarImageIcon" src="@Url.Content(Model)"/>
+}
+

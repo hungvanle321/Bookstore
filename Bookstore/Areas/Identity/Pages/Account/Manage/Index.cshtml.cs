@@ -6,6 +6,8 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Bookstore.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -16,13 +18,16 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public IndexModel(
             UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            SignInManager<IdentityUser> signInManager,
+            IWebHostEnvironment webHostEnvironment)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         /// <summary>
@@ -30,13 +35,6 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public string Username { get; set; }
-
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        [TempData]
-        public string StatusMessage { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -55,21 +53,31 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Phone]
+            [Required]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+            [Required]
+            public string FirstName { get; set; }
+            [Required]
+            public string LastName { get; set; }
+            [Required]
+            public string Address { get; set; }
+            public string AvatarPath { get; set; }
         }
 
         private async Task LoadAsync(IdentityUser user)
         {
-            var userName = await _userManager.GetUserNameAsync(user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            var userInfo = (ApplicationUser)await _userManager.FindByIdAsync(user.Id);            
 
-            Username = userName;
+            Username = userInfo.UserName;
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = userInfo.PhoneNumber,
+                FirstName = userInfo.FirstName,
+                LastName = userInfo.LastName,
+                Address = userInfo.Address,
+                AvatarPath = userInfo.AvatarPath
             };
         }
 
@@ -85,9 +93,9 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(IFormFile? file)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = (ApplicationUser)await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
@@ -105,13 +113,41 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
                 var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
                 if (!setPhoneResult.Succeeded)
                 {
-                    StatusMessage = "Unexpected error when trying to set phone number.";
-                    return RedirectToPage();
+                    ModelState.AddModelError("Input.PhoneNumber", "Unexpected error when trying to set phone number.");
+                    return Page();
                 }
             }
 
+            string wwwRootPath = _webHostEnvironment.WebRootPath;
+            if (file != null)
+            {
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                string avatarPath = Path.Combine(wwwRootPath, "images", "avatar");
+
+                // Update image if exist
+                if (!string.IsNullOrEmpty(user.AvatarPath))
+                {
+                    var oldImagePath = Path.Combine(wwwRootPath, user.AvatarPath.TrimStart('\\'));
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+
+                using (var fileStream = new FileStream(Path.Combine(avatarPath, fileName), FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+                user.AvatarPath = @"\images\avatar\" + fileName;
+            }
+
+            user.FirstName = Input.FirstName;
+            user.LastName = Input.LastName;
+            user.Address = Input.Address;
+            await _userManager.UpdateAsync(user);
+            
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            TempData["success"] = "Your profile has been updated";
             return RedirectToPage();
         }
     }

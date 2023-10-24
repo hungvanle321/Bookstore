@@ -1,2 +1,9 @@
 ﻿@model int
-<i class="bi bi-cart"></i>(@Model)
+<i class="bi bi-cart position-relative">
+    @if (User.Identity.IsAuthenticated)
+    {
+        <span class="position-absolute top-0 translate-middle rounded-pill badge bg-warning fst-normal">
+            @Model
+        </span>
+    }
+</i>

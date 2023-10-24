@@ -8,7 +8,7 @@
 	{
 		<li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-				<i class="bi bi-person-circle" style="font-size: 24px;"></i>
+				@await Component.InvokeAsync("Avatar")
 			</a>
 			<ul class="dropdown-menu dropdown-menu-end" style="width: 20vw; right:0;" id="userDropdownMenu">
 				<li class="nav-link text-dark">@UserManager.GetUserName(User)</li>
@@ -69,16 +69,19 @@
 	else
 	{
 		<li class="nav-item">
-			<a class="nav-link text-white" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-		</li>
-		<li class="nav-item">
-			<a class="nav-link text-white" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+			<a class="nav-link text-dark btn bg-white fw-bold border-1" id="login" asp-area="Identity" asp-page="/Account/Login">Sign In</a>
 		</li>
 	}
 </ul>
 
 <script>
 	$(document).ready(function () {
+		$('.bi-person-circle').tooltip({
+			title: 'Account', 
+			placement: 'bottom', 
+			trigger: 'hover'
+		});
+
 		if ($("#managementDropdownItem").length) {
 			$("#managementDropdownItem").click(function () {
 				$("#userDropdownMenu").removeClass('show');
@@ -98,6 +101,10 @@
 			if (!target.closest('.dropdown').length && $('.dropdown .dropdown-menu').hasClass('show')) {
 				$('.navbar-nav .dropdown .dropdown-menu').removeClass('show');
 			}
+		});
+
+		$('.dropdown .dropdown-menu').click(function (event) {
+			event.stopPropagation();
 		});
 	});
 </script>
