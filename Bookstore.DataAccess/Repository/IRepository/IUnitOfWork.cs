@@ -13,6 +13,9 @@ namespace Bookstore.DataAccess.Repository.IRepository
         ILanguageRepository LanguageRepo { get; }
 		ICategoryRepository CategoryRepo { get; }
         IShoppingCartRepository ShoppingCartRepo { get; }
+        IOrderHeaderRepository OrderHeaderRepo { get; }
+        IOrderDetailRepository OrderDetailRepo { get; }
+        IApplicationUserRepository ApplicationUserRepo { get; }
 		Task SaveAsync();
     }
 }

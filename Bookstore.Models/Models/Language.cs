@@ -12,5 +12,6 @@ namespace Bookstore.Models
 		[MaxLength(50)]
 		[Display(Name = "Name")]
 		public string LanguageName { get; set; }
+		public bool IsDeleted { get; set; } = false;
 	}
 }

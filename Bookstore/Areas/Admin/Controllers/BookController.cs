@@ -6,6 +6,12 @@ using Bookstore.Models;
 using Bookstore.Models.ViewModel;
 using Bookstore.Utility;
 using System.Data;
+using System.Security.Claims;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using SmartBreadcrumbs.Attributes;
+using SmartBreadcrumbs.Nodes;
 
 namespace Bookstore.Areas.Admin.Controllers
 {
@@ -15,11 +21,14 @@ namespace Bookstore.Areas.Admin.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public BookController(IUnitOfWork db, IWebHostEnvironment webHostEnvironment)
+		private readonly IConfiguration _configuration;
+        public BookController(IUnitOfWork db, IWebHostEnvironment webHostEnvironment, IConfiguration configuration)
         {
             _unitOfWork = db;
             _webHostEnvironment = webHostEnvironment;
+			_configuration = configuration;
         }
+		[Breadcrumb(Title = "Book Management")]
 		public IActionResult Index()
 		{
 			return View();
@@ -41,17 +50,51 @@ namespace Bookstore.Areas.Admin.Controllers
 
             if (id == null)
             {
-                //Create
-                return View(bookVM);
+				//Create
+				var managementPage = new MvcBreadcrumbNode("Index", "Book", "Book Management", areaName: "Admin");
+				var page = new MvcBreadcrumbNode("CreateAndEdit", "Book", "Create New Book", areaName: "Admin") { Parent = managementPage };
+				ViewData["BreadcrumbNode"] = page;
+				return View(bookVM);
             }
             else
             {
-				bookVM.Book = await _unitOfWork.BookRepo.GetAsync(c => c.BookId == id);
+				var managementPage = new MvcBreadcrumbNode("Index", "Book", "Book Management");
+				var page = new MvcBreadcrumbNode("CreateAndEdit", "Book", "Update Book") { Parent = managementPage };
+				ViewData["BreadcrumbNode"] = page;
+				bookVM.Book = await _unitOfWork.BookRepo.GetAsync(c => c.BookId == id, tracked: true);
                 return View(bookVM);
 			}
 		}
 
-        [HttpPost]
+		[HttpPost]
+		public IActionResult ValidateFile(IFormFile? file)
+		{
+			if (file == null || file.Length == 0)
+			{
+				return Json(new { success = false, error = "Problem when uploading this file. Please try another file." });
+			}
+
+			if (!FileImageUploadValidation.IsFileExtensionValid(file, out string ErrorMessage))
+			{
+				return Json(new { success = false, error = ErrorMessage });
+			}
+
+			if (!FileImageUploadValidation.IsFileSignatureValid(file, out ErrorMessage))
+			{
+				return Json(new { success = false, error = ErrorMessage });
+			}
+
+			long fileSizeLimit = _configuration.GetValue<long>("FileSizeLimit");
+			if (FileImageUploadValidation.IsFileSizeExceedLimit(file, fileSizeLimit, out ErrorMessage))
+			{
+				return Json(new { success = false, error = ErrorMessage });
+			}
+
+			return Json(new { success = true });
+		}
+
+
+		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> CreateAndEdit(BookEditViewModel bookVM, IFormFile? file)
 		{
@@ -71,7 +114,7 @@ namespace Bookstore.Areas.Admin.Controllers
 				string wwwRootPath = _webHostEnvironment.WebRootPath;
 				if (file != null)
 				{
-					string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
 					string bookPath = Path.Combine(wwwRootPath, "images", "book");
 
                     // Update image if exist
@@ -93,15 +136,23 @@ namespace Bookstore.Areas.Admin.Controllers
 				else bookVM.Book.ImageUrl = "";
 
 				bookVM.Book.PublicationDate = DateOnly.FromDateTime(bookVM.Book.PublicationDateUI);
+				var claimedIdentity = (ClaimsIdentity?)User.Identity;
+				var user = claimedIdentity?.FindFirst(ClaimTypes.NameIdentifier);
 
-                if (bookVM.Book.BookId == 0)
+				if (bookVM.Book.BookId == 0)
                 {
-					await _unitOfWork.BookRepo.AddAsync(bookVM.Book);
+					bookVM.Book.CreatedBy = user.Value;
+					bookVM.Book.CreatedAt = DateTime.Now;
+                    bookVM.Book.UpdatedBy = user.Value;
+                    bookVM.Book.UpdatedAt = DateTime.Now;
+                    await _unitOfWork.BookRepo.AddAsync(bookVM.Book);
 					await _unitOfWork.SaveAsync();
 					TempData["success"] = "Book created successfully";
 				}
                 else
                 {
+					bookVM.Book.UpdatedBy = user.Value;
+					bookVM.Book.UpdatedAt = DateTime.Now;
 					_unitOfWork.BookRepo.Update(bookVM.Book);
 					await _unitOfWork.SaveAsync();
 					TempData["success"] = "Book updated successfully";
@@ -119,7 +170,6 @@ namespace Bookstore.Areas.Admin.Controllers
 				);
 				return View(bookVM);
 			}
-
 		}
 
         [HttpGet]

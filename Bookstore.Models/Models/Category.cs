@@ -12,5 +12,10 @@ namespace Bookstore.Models
 		[Required]
 		[Display(Name = "Name")]
 		public string CategoryName { get; set;}
-    }
+		public bool IsDeleted { get; set; } = false;
+		public DateTime UpdatedAt { get; set; }
+		public string UpdatedBy { get; set; }
+		public DateTime CreatedAt { get; set; }
+		public string CreatedBy { get; set; }
+	}
 }

@@ -46,7 +46,7 @@ namespace Bookstore.Models
 		[RegularExpression("^\\d+(\\.\\d{1,2})?$", ErrorMessage = "Please enter a valid number with up to two decimal places")]
 		[Display(Name = "Discount Price")]
 		public double DiscountPrice { get; set; }
-		[Display(Name = "Product Image")]
+		[Display(Name = "Book Image")]
 		[ValidateNever]
 		public string ImageUrl { get; set; }
 		[Required]
@@ -58,5 +58,14 @@ namespace Bookstore.Models
 
 		[ValidateNever]
 		public virtual Category Category { get; set; }
+		public bool IsDeleted { get; set; } = false;
+        [ValidateNever]
+        public DateTime UpdatedAt { get; set; }
+        [ValidateNever]
+        public string UpdatedBy { get; set; }
+        [ValidateNever]
+        public DateTime CreatedAt { get; set; }
+        [ValidateNever]
+        public string CreatedBy { get; set; }
 	}
 }

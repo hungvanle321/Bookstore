@@ -2,32 +2,34 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Bookstore.Models;
-using Microsoft.AspNetCore.Hosting;
+using Bookstore.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using SmartBreadcrumbs.Nodes;
 
 namespace Bookstore.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IConfiguration _configuration;
 
         public IndexModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
-            IWebHostEnvironment webHostEnvironment)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IWebHostEnvironment webHostEnvironment,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _webHostEnvironment = webHostEnvironment;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -54,29 +56,24 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [Display(Name = "Phone number")]
+            [Display(Name = "Phone Number")]
             public string PhoneNumber { get; set; }
             [Required]
-            public string FirstName { get; set; }
-            [Required]
-            public string LastName { get; set; }
-            [Required]
-            public string Address { get; set; }
+			[Display(Name = "Name")]
+			public string Name { get; set; }
             public string AvatarPath { get; set; }
         }
 
         private async Task LoadAsync(IdentityUser user)
         {
-            var userInfo = (ApplicationUser)await _userManager.FindByIdAsync(user.Id);            
+            var userInfo = await _userManager.FindByIdAsync(user.Id);            
 
             Username = userInfo.UserName;
 
             Input = new InputModel
             {
                 PhoneNumber = userInfo.PhoneNumber,
-                FirstName = userInfo.FirstName,
-                LastName = userInfo.LastName,
-                Address = userInfo.Address,
+                Name = userInfo.Name,
                 AvatarPath = userInfo.AvatarPath
             };
         }
@@ -89,8 +86,39 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            await LoadAsync(user);
+			var accountPage = new RazorPageBreadcrumbNode("/Identity/Account/Manage", "Account");
+			var page = new RazorPageBreadcrumbNode("/Identity/Account/Manage", "Profiles") { Parent = accountPage };
+			ViewData["BreadcrumbNode"] = page;
+
+			await LoadAsync(user);
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostFileValidationAsync(IFormFile file)
+        {
+
+            if (file == null || file.Length == 0)
+            {
+                return new JsonResult(new { success = false, error = "Problem when uploading this file. Please try another file." });
+            }
+
+            if (!FileImageUploadValidation.IsFileExtensionValid(file, out string errorMessage))
+            {
+                return new JsonResult(new { success = false, error = errorMessage });
+            }
+
+            if (!FileImageUploadValidation.IsFileSignatureValid(file, out errorMessage))
+            {
+                return new JsonResult(new { success = false, error = errorMessage });
+            }
+
+            long fileSizeLimit = _configuration.GetValue<long>("FileSizeLimit");
+            if (FileImageUploadValidation.IsFileSizeExceedLimit(file, fileSizeLimit, out errorMessage))
+            {
+                return new JsonResult(new { success = false, error = errorMessage });
+            }
+
+            return new JsonResult(new { success = true });
         }
 
         public async Task<IActionResult> OnPostAsync(IFormFile? file)
@@ -110,10 +138,19 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
             {
+                var isPhoneNumberExist = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == Input.PhoneNumber);
+                if (isPhoneNumberExist!=null && isPhoneNumberExist.UserName != user.UserName)
+                {
+                    ModelState.AddModelError("Input.PhoneNumber", "This phone number is already registered");
+                    await LoadAsync(user);
+                    return Page();
+                }
+
                 var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
                 if (!setPhoneResult.Succeeded)
                 {
-                    ModelState.AddModelError("Input.PhoneNumber", "Unexpected error when trying to set phone number.");
+                    ModelState.AddModelError("Input.PhoneNumber", "Unexpected error when trying to set phone number");
+                    await LoadAsync(user);
                     return Page();
                 }
             }
@@ -141,9 +178,7 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
                 user.AvatarPath = @"\images\avatar\" + fileName;
             }
 
-            user.FirstName = Input.FirstName;
-            user.LastName = Input.LastName;
-            user.Address = Input.Address;
+            user.Name = Input.Name;
             await _userManager.UpdateAsync(user);
             
             await _signInManager.RefreshSignInAsync(user);

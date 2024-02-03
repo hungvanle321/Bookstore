@@ -4,6 +4,7 @@ using Bookstore.DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Bookstore.Utility;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
 
 namespace Bookstore.Areas.Admin.Controllers
 {
@@ -25,9 +26,21 @@ namespace Bookstore.Areas.Admin.Controllers
         {
 			try
 			{
+                var isCategoryExist = await _unitOfWork.CategoryRepo.GetAllAsync(c => c.CategoryName == inputValue);
+                if (isCategoryExist.Count() > 0)
+                {
+                    throw new Exception("This category is already exist");
+                }
+
+				var claimedIdentity = (ClaimsIdentity?)User.Identity;
+				var user = claimedIdentity?.FindFirst(ClaimTypes.NameIdentifier);
 				Category category = new()
                 {
-                    CategoryName = inputValue
+                    CategoryName = inputValue,
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = user.Value,
+                    UpdatedAt = DateTime.Now,
+                    UpdatedBy = user.Value
                 };
 				await _unitOfWork.CategoryRepo.AddAsync(category);
 				await _unitOfWork.SaveAsync();
@@ -35,7 +48,7 @@ namespace Bookstore.Areas.Admin.Controllers
 			}
 			catch (Exception ex)
 			{
-				return Json(new { success = false, message = "An error occurred: " + ex.Message });
+				return Json(new { success = false, message = ex.Message });
 			}
 		}
 
@@ -48,7 +61,11 @@ namespace Bookstore.Areas.Admin.Controllers
 				return Json(new { success = false, message = "Error while editing" });
 			}
 
-            category.CategoryName = inputValue;
+			var claimedIdentity = (ClaimsIdentity?)User.Identity;
+			var user = claimedIdentity?.FindFirst(ClaimTypes.NameIdentifier);
+			category.CategoryName = inputValue;
+            category.UpdatedAt = DateTime.Now;
+            category.UpdatedBy = user.Value;
 			_unitOfWork.CategoryRepo.Update(category);
 			await _unitOfWork.SaveAsync();
 			return Json(new { success = true, message = "Category edited successfully!" });

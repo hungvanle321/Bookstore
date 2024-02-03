@@ -14,16 +14,17 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Bookstore.Models;
 
 namespace Bookstore.Areas.Identity.Pages.Account
 {
 	public class LoginModel : PageModel
 	{
-		private readonly SignInManager<IdentityUser> _signInManager;
-		private readonly UserManager<IdentityUser> _userManager;
+		private readonly SignInManager<ApplicationUser> _signInManager;
+		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly ILogger<LoginModel> _logger;
 
-		public LoginModel(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+		public LoginModel(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
 		{
 			_signInManager = signInManager;
 			_logger = logger;
@@ -81,7 +82,7 @@ namespace Bookstore.Areas.Identity.Pages.Account
 			///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
 			///     directly from your code. This API may change or be removed in future releases.
 			/// </summary>
-			[Display(Name = "Remember me?")]
+			[Display(Name = "Remember me")]
 			public bool RememberMe { get; set; }
 		}
 
@@ -92,7 +93,13 @@ namespace Bookstore.Areas.Identity.Pages.Account
 				ModelState.AddModelError(string.Empty, ErrorMessage);
 			}
 
-			returnUrl ??= Url.Content("~/");
+            Input = new InputModel
+            {
+                Username = TempData["Username"]?.ToString(),
+                Password = TempData["Password"]?.ToString()
+            };
+
+            returnUrl ??= Url.Content("~/");
 
 			// Clear the existing external cookie to ensure a clean login process
 			await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
@@ -110,15 +117,9 @@ namespace Bookstore.Areas.Identity.Pages.Account
 
 			if (ModelState.IsValid)
 			{
-				var usernameExists = _userManager.FindByNameAsync(Input.Username).GetAwaiter().GetResult();
-				if (usernameExists == null)
-				{
-					ModelState.AddModelError("Input.Username", "This username does not exist");
-					return Page();
-				}
 				// This doesn't count login failures towards account lockout
 				// To enable password failures to trigger account lockout, set lockoutOnFailure: true
-				var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+				var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberMe, lockoutOnFailure: true);
 				if (result.Succeeded)
 				{
 					_logger.LogInformation("User logged in.");
@@ -130,18 +131,22 @@ namespace Bookstore.Areas.Identity.Pages.Account
 				}
 				if (result.IsLockedOut)
 				{
-					_logger.LogWarning("User account locked out.");
-					return RedirectToPage("./Lockout");
+                    ModelState.AddModelError("Input.Password", "Your account has been locked out due to too many invalid login attempts.");
+                    _logger.LogWarning("User account locked out.");
+					return Page();
 				}
 				else
 				{
 					ModelState.AddModelError("Input.Password", "The username or password is incorrect!");
-					return Page();
+                    TempData["Username"] = Input.Username;
+                    TempData["Password"] = Input.Password;
+                    return Page();
 				}
 			}
 
-			// If we got this far, something failed, redisplay form
-			return Page();
+            TempData["Username"] = Input.Username;
+            TempData["Password"] = Input.Password;
+            return Page();
 		}
 	}
 }

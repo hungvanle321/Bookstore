@@ -5,46 +5,52 @@
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
+<h2 class="fw-bold">@ViewData["Title"]</h2>
 <div class="row profile_page">
     <form id="profile-form" method="post" onkeydown="return event.key != 'Enter';"
     enctype="multipart/form-data" class="d-flex">
     <div class="col-md-6">       
-            <div class="form-floating my-3">
-                <input asp-for="Input.FirstName" class="form-control" />
-                <label asp-for="Input.FirstName" class="form-label"></label>
-                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            <div class="pb-1 pt-2">
+                <label asp-for="Input.Name" class="p-0"></label>
+                <input asp-for="Input.Name" class="form-control" />
+                <span asp-validation-for="Input.Name" class="text-danger"></span>
             </div>
-            <div class="form-floating my-3">
-                <input asp-for="Input.LastName" class="form-control" />
-                <label asp-for="Input.LastName" class="form-label"></label>
-                <span asp-validation-for="Input.LastName" class="text-danger"></span>
-            </div>
-            <div class="form-floating my-3">
+            <div class="py-3">
+                <label asp-for="Username" class="p-0"></label>
                 <input asp-for="Username" class="form-control" disabled />
-                <label asp-for="Username" class="form-label"></label>
             </div>
-            <div class="form-floating my-3">
+            <div class="py-1">
+                <label asp-for="Input.PhoneNumber" class="p-0"></label>
                 <input asp-for="Input.PhoneNumber" class="form-control" />
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
-            <div class="form-floating my-3">
-                <input asp-for="Input.Address" class="form-control" />
-                <label asp-for="Input.Address" class="form-label"></label>
-                <span asp-validation-for="Input.Address" class="text-danger"></span>
-            </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-        
+            <div class="pt-3 pb-5 d-flex justify-content-center">
+                <button id="update-profile-button" type="submit" class="btn text-white fw-bold">Save changes</button>
+            </div>        
     </div>
     <div class="col-md-6 d-flex justify-content-center align-items-center">
         <div class="text-center align-middle">
             <img src='@(Model.Input.AvatarPath != "" ? Url.Content(Model.Input.AvatarPath) : Url.Content("~/images/avatar/default.png"))' 
+            data-bs-toggle="modal" data-bs-target="#avatarimgModal"
             id="avatarPreview"
-            class="avatar img-circle mb-5">
+            class="avatar img-circle mb-5"
+            alt="Avatar Image">
             <input type="file" name="file" class="form-control" id="avatarInput">
+            <span id="fileUploadErrorMessage" class="text-danger"></span>
         </div>
     </div>
     </form>
+
+    <div class="modal fade" id="avatarimgModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body p-0 ">
+                    <img alt="Avatar Image"
+                         src='@(Model.Input.AvatarPath != "" ? Url.Content(Model.Input.AvatarPath) : Url.Content("~/images/avatar/default.png"))' />
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
@@ -54,12 +60,36 @@
             $("#avatarInput").change(function () {
                 const file = this.files[0];
                 if (file) {
-                    let reader = new FileReader();
-                    reader.onload = function (event) {
-                        $("#avatarPreview")
-                            .attr("src", event.target.result);
-                    };
-                    reader.readAsDataURL(file);
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    const antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+                    formData.append("__RequestVerificationToken", antiForgeryToken);
+
+                    $.ajax({
+                        url: "@Url.Page("Index","FileValidation")",
+                        type: "POST",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.success) {
+                                console.log(1);
+                                $("#fileUploadErrorMessage").hide();
+                                let reader = new FileReader();
+                                reader.onload = function (event) {
+                                    $("#avatarPreview").attr("src", event.target.result);
+                                };
+                                reader.readAsDataURL(file);
+                            } else {
+                                console.log(2);
+                                $("#fileUploadErrorMessage").show();
+                                $("#fileUploadErrorMessage").text(response.error);
+                            }
+                        },
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.error("Error: " + xhr.responseText);
+                        }
+                    });
                 }
             });
         });

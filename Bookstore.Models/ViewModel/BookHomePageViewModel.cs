@@ -28,5 +28,6 @@ namespace Bookstore.Models.ViewModel
 
 		public double ? MaxPrice { get; set; }
 		public double? MinPrice { get; set;}
+		public int TotalCount { get; set; }
 	}
 }

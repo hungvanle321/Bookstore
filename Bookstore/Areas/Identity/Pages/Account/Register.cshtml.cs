@@ -28,25 +28,22 @@ namespace Bookstore.Areas.Identity.Pages.Account
 {
 	public class RegisterModel : PageModel
 	{
-		private readonly SignInManager<IdentityUser> _signInManager;
-		private readonly RoleManager<IdentityRole> _roleManager;
-		private readonly UserManager<IdentityUser> _userManager;
-		private readonly IUserStore<IdentityUser> _userStore;
-		private readonly IUserEmailStore<IdentityUser> _emailStore;
+		private readonly SignInManager<ApplicationUser> _signInManager;
+		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly IUserStore<ApplicationUser> _userStore;
+		private readonly IUserEmailStore<ApplicationUser> _emailStore;
 		private readonly ILogger<RegisterModel> _logger;
 		private readonly IEmailSender _emailSender;
 		private readonly IUnitOfWork _unitOfWork;
 		public RegisterModel(
-			UserManager<IdentityUser> userManager,
-			RoleManager<IdentityRole> roleManager,
-			IUserStore<IdentityUser> userStore,
-			SignInManager<IdentityUser> signInManager,
+			UserManager<ApplicationUser> userManager,
+			IUserStore<ApplicationUser> userStore,
+			SignInManager<ApplicationUser> signInManager,
 			ILogger<RegisterModel> logger,
 			IEmailSender emailSender,
 			IUnitOfWork unitOfWork)
 		{
 			_userManager = userManager;
-			_roleManager = roleManager;
 			_userStore = userStore;
 			_emailStore = GetEmailStore();
 			_signInManager = signInManager;
@@ -113,11 +110,6 @@ namespace Bookstore.Areas.Identity.Pages.Account
 			[Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
 			public string ConfirmPassword { get; set; }
 
-			// Determine which role
-			public string? Role { get; set; }
-			[ValidateNever]
-			public IEnumerable<SelectListItem> RoleList { get; set; }
-
 			[Required]
 			public string Username { get; set; }
 		}
@@ -125,22 +117,8 @@ namespace Bookstore.Areas.Identity.Pages.Account
 
 		public async Task OnGetAsync(string returnUrl = null)
 		{
-			if (!_roleManager.RoleExistsAsync(StaticDetails.Role_Customer).GetAwaiter().GetResult())
-			{
-				_roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Customer)).GetAwaiter().GetResult();
-				_roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Admin)).GetAwaiter().GetResult();
-				_roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_Employee)).GetAwaiter().GetResult();
-			}
 
-			Input = new()
-			{
-				RoleList = _roleManager.Roles.Select(r => r.Name).Select(i => new SelectListItem
-				{
-					Text = i,
-					Value = i
-				}),
-			};
-
+			Input = new();
 			ReturnUrl = returnUrl;
 			ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 		}
@@ -178,22 +156,13 @@ namespace Bookstore.Areas.Identity.Pages.Account
 				{
 					_logger.LogInformation("User created a new account with password.");
 
-					if (!string.IsNullOrEmpty(Input.Role))
-					{
-						await _userManager.AddToRoleAsync(user, Input.Role);
-					}
-					else
-					{
-						await _userManager.AddToRoleAsync(user, StaticDetails.Role_Customer);
-					}
-
 					var userId = await _userManager.GetUserIdAsync(user);
 					var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 					code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 					var callbackUrl = Url.Page(
 						"/Account/ConfirmEmail",
 						pageHandler: null,
-						values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+						values: new { area = "Identity", userId, code, returnUrl },
 						protocol: Request.Scheme);
 
 					await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
@@ -201,7 +170,7 @@ namespace Bookstore.Areas.Identity.Pages.Account
 
 					if (_userManager.Options.SignIn.RequireConfirmedAccount)
 					{
-						return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+						return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
 					}
 					else
 					{
@@ -227,19 +196,19 @@ namespace Bookstore.Areas.Identity.Pages.Account
 			}
 			catch
 			{
-				throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
-					$"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+				throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
+					$"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
 					$"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
 			}
 		}
 
-		private IUserEmailStore<IdentityUser> GetEmailStore()
+		private IUserEmailStore<ApplicationUser> GetEmailStore()
 		{
 			if (!_userManager.SupportsUserEmail)
 			{
 				throw new NotSupportedException("The default UI requires a user store with email support.");
 			}
-			return (IUserEmailStore<IdentityUser>)_userStore;
+			return (IUserEmailStore<ApplicationUser>)_userStore;
 		}
 	}
 }

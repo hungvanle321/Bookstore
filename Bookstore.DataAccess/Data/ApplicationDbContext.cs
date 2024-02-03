@@ -14,7 +14,9 @@ namespace Bookstore.DataAccess.Data
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 		public DbSet<ShoppingCart> ShoppingCarts { get; set; }
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public DbSet<OrderHeader> OrderHeaders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
 
@@ -22,7 +24,8 @@ namespace Bookstore.DataAccess.Data
 
 			modelBuilder.Entity<Language>().HasData(
 					new Language { LanguageId=1, LanguageName = "English" },
-					new Language { LanguageId = 2, LanguageName = "Vietnamese" }
+					new Language { LanguageId = 2, LanguageName = "Vietnamese" },
+					new Language { LanguageId = 3, LanguageName = "Thai"}
 				);
 		}
 		protected override void ConfigureConventions(ModelConfigurationBuilder builder)

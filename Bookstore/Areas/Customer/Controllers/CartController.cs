@@ -7,6 +7,9 @@ using Bookstore.Models.ViewModel;
 using Bookstore.Utility;
 using System;
 using System.Security.Claims;
+using SmartBreadcrumbs.Attributes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace MyWeb.Areas.Customer.Controllers
 {
@@ -19,7 +22,9 @@ namespace MyWeb.Areas.Customer.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<IActionResult> Index()
+
+		[Breadcrumb(Title = "Cart")]
+		public async Task<IActionResult> Index()
         {
             var claimedIdentity = (ClaimsIdentity?)User.Identity;
             var userId = claimedIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -31,6 +36,44 @@ namespace MyWeb.Areas.Customer.Controllers
 
             return View(shoppingCartViewModel);
         }
+
+		[Breadcrumb(FromAction = "Index", Title = "Checkout")]
+		public async Task<IActionResult> Checkout()
+        {
+			var claimedIdentity = (ClaimsIdentity?)User.Identity;
+			var userId = claimedIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			var user = await _unitOfWork.ApplicationUserRepo.GetAsync(u => u.Id == userId);
+			string? jsonData = Request.Cookies["jsonData"];
+
+			var viewModel = new OrderViewModel()
+            {
+				jsonData = jsonData,
+				ShipEmail = user.Email,
+				ShipPhoneNumber = user.PhoneNumber,
+				ShipName = user.Name
+            };
+
+			JObject jsonObject = JObject.Parse(jsonData);
+
+			foreach (var property in jsonObject)
+			{
+				JArray valueArray = (JArray)property.Value;
+
+				int bookId = valueArray[0].Value<int>();
+				int count = valueArray[1].Value<int>();
+
+				ShoppingCart shoppingCart = new()
+				{
+					BookId = bookId,
+					Book = await _unitOfWork.BookRepo.GetAsync(b=>b.BookId == bookId),
+					ApplicationUserId = userId,
+					Count = count
+				};
+				viewModel.ChosenBooks.Add(shoppingCart);
+			}
+
+			return View(viewModel);
+		}
 
         [HttpPost]
 		public async Task<IActionResult> CartCountDecrease(string applicationUserId, int bookId)

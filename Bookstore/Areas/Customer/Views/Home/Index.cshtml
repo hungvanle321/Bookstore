@@ -1,74 +1,150 @@
 ﻿@{
 	ViewData["Title"] = "Home Page";
+	ViewData["NavTab"] = "Home";
 }
-<div id="myCarousel" class="carousel slide banner-main" data-bs-ride="carousel">
-	<div class="carousel-inner">
-		<div class="carousel-item active">
-			<img class="first-slide" src="~/images/home_banner/banner1.jpg" alt="First slide">
-			<div class="container">
-				<div class="carousel-caption relative">
-					<h1>Embark on a Literary <br> Journey</h1>
-					<p>
-						Step into our bookstore and embark on a literary journey. <br>
-						Discover new worlds, meet fascinating characters, and explore intriguing stories. <br>
-						Our books are your passport to countless adventures.
-					</p>
-					<div class="button_section"> <a class="main_bt" href="#">Discover</a>  </div>
-					<ul class="locat_icon">
-					</ul>
+<div class="landing-page">
+	<div id="myCarousel" class="carousel slide banner-main" data-bs-ride="carousel">
+		<div class="carousel-inner">
+			<div class="carousel-item active">
+				<img class="first-slide" src="~/images/home_banner/banner1.jpg" alt="First slide">
+				<div class="container">
+					<div class="carousel-caption relative col-8">
+						<h1 class="d-none d-md-block">Embark on a Literary Journey</h1>
+						<p class="d-none d-lg-block">
+							Step into our bookstore and embark on a literary journey. <br>
+							Discover new worlds, meet fascinating characters, and explore intriguing stories. <br>
+							Our books are your passport to countless adventures.
+						</p>
+						<a class="discover-btn" asp-controller="Home" asp-action="Books">Discover</a>
+					</div>
+				</div>
+			</div>
+			<div class="carousel-item">
+				<img class="second-slide" src="~/images/home_banner/banner2.jpg" alt="Second slide">
+				<div class="container">
+					<div class="carousel-caption relative col-8">
+						<h1 class="d-none d-md-block">Unleash Your Imagination with Our New Arrivals</h1>
+						<p class="d-none d-lg-block">
+							Every week, we bring in a fresh selection of books for you to explore. <br>
+							Unleash your imagination with the latest bestsellers, critically acclaimed novels, and undiscovered gems.
+						</p>
+						<a class="discover-btn" asp-controller="Home" asp-action="Books">Discover</a>
+					</div>
+				</div>
+			</div>
+			<div class="carousel-item">
+				<img class="third-slide" src="~/images/home_banner/banner3.jpg" alt="Third slide">
+				<div class="container">
+					<div class="carousel-caption relative col-8">
+						<h1 class="d-none d-md-block">We Deliver Your Favorite Books to Your Doorstep</h1>
+						<p class="d-none d-lg-block">
+							Enjoy the convenience of getting your favorite books delivered right to your doorstep. <br>
+							With our free city-wide delivery service, you can stay in the comfort of your home and still indulge in your love for reading.
+						</p>
+						<a class="discover-btn" asp-controller="Home" asp-action="Books">Discover</a>
+					</div>
+				</div>
+			</div>
+			<div class="carousel-item">
+				<img class="third-slide" src="~/images/home_banner/banner4.jpg" alt="Fourth slide">
+				<div class="container">
+					<div class="carousel-caption relative col-8">
+						<h1 class="d-none d-md-block">Gift a Book - Gift Knowledge</h1>
+						<p class="d-none d-lg-block">
+							Looking for the perfect gift? Give the gift of knowledge with our wide range of books. <br>
+							From thrilling mysteries to insightful biographies, you`ll find the perfect book for everyone on your list.
+						</p>
+						<a class="discover-btn" asp-controller="Home" asp-action="Books">Discover</a>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div class="carousel-item">
-			<img class="second-slide" src="~/images/home_banner/banner2.jpg" alt="Second slide">
-			<div class="container">
-				<div class="carousel-caption relative">
-					<h1>Unleash Your Imagination with Our New <br> Arrivals</h1>
-					<p>
-						Every week, we bring in a fresh selection of books for you to explore. <br>
-						Unleash your imagination with the latest bestsellers, critically acclaimed novels, and undiscovered gems.
-					</p>
-					<div class="button_section"> <a class="main_bt" href="#">Discover</a>  </div>
-					<ul class="locat_icon">
-					</ul>
-				</div>
-			</div>
+		<a class="carousel-control-prev" href="#myCarousel" role="button" data-bs-slide="prev">
+			<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		</a>
+		<a class="carousel-control-next" href="#myCarousel" role="button" data-bs-slide="next">
+			<span class="carousel-control-next-icon" aria-hidden="true"></span>
+		</a>
+	</div>
+	<div class="bg-white text-center py-5">
+		<div class="py-2">
+			<h2 class="fw-bolder lh-base">To access our service<br />you need to know some issues</h2>
 		</div>
-		<div class="carousel-item">
-			<img class="third-slide" src="~/images/home_banner/banner3.jpg" alt="Third slide">
-			<div class="container">
-				<div class="carousel-caption relative">
-					<h1>We Deliver Your Favorite Books to Your <br> Doorstep</h1>
-					<p>
-						Enjoy the convenience of getting your favorite books delivered right to your doorstep. <br>
-						With our free city-wide delivery service, you can stay in the comfort of your home and still indulge in your love for reading.
-					</p>
-					<div class="button_section"> <a class="main_bt" href="#">Discover</a>  </div>
-					<ul class="locat_icon">
-					</ul>
-				</div>
-			</div>
+		<div>
+			<h3 class="lh-base">Bookselling is the commercial trading of books which is the retail <br /> and distribution end of the publishing process.</h3>
 		</div>
-		<div class="carousel-item">
-			<img class="third-slide" src="~/images/home_banner/banner4.jpg" alt="Fourth slide">
-			<div class="container">
-				<div class="carousel-caption relative">
-					<h1>Gift a Book - Gift Knowledge</h1>
-					<p>
-						Looking for the perfect gift? Give the gift of knowledge with our wide range of books. <br>
-						From thrilling mysteries to insightful biographies, you`ll find the perfect book for everyone on your list.
-					</p>
-					<div class="button_section"> <a class="main_bt" href="#">Discover</a>  </div>
-					<ul class="locat_icon">
-					</ul>
+		<div class="d-sm-flex justify-content-center py-3">
+			<div class="col-10 offset-1 offset-sm-0 col-sm-3">
+				<div class="d-flex justify-content-center py-2">
+					<div class="criteria-icons" style="background-color: #f5566e;"><i class="fa fa-truck" aria-hidden="true"></i></div>
 				</div>
+				<div class="py-2">
+					<h3 class="fw-bold">Book Quality</h3>
+				</div>
+				<h3 class ="lh-base text-justify">
+					We pride ourselves on offering high-quality books from reputable publishers.
+				</h3>
+			</div>
+			<div class="col-10 offset-1 col-sm-3">
+				<div class="d-flex justify-content-center py-2">
+					<div class="criteria-icons" style="background-color: #f8b80d;"><i class="fa fa-money" aria-hidden="true"></i></div>
+				</div>
+				<div class="py-2">
+					<h3 class="fw-bold">Competitive Pricing</h3>
+				</div>
+				<h3 class="lh-base">
+					Reasonable and competitive prices, suitable for all customer segments.
+				</h3>
+			</div>
+			<div class="col-10 offset-1 col-sm-3">
+				<div class="d-flex justify-content-center py-2">
+					<div class="criteria-icons" style="background-color: #7cc0ab;"><i class="fa fa-users" aria-hidden="true"></i></div>
+				</div>
+				
+				<div class="py-2">
+					<h3 class="fw-bold">Dedicated Customer Service</h3>
+				</div>
+				<h3 class="lh-base">
+					24/7 customer service, always ready to answer your questions.
+				</h3>
 			</div>
 		</div>
 	</div>
-	<a class="carousel-control-prev" href="#myCarousel" role="button" data-bs-slide="prev">
-		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-	</a>
-	<a class="carousel-control-next" href="#myCarousel" role="button" data-bs-slide="next">
-		<span class="carousel-control-next-icon" aria-hidden="true"></span>
-	</a>
+
+	@await Component.InvokeAsync("LandingPageBooks", StaticDetails.LandingPage_Newest)
+	@await Component.InvokeAsync("LandingPageBooks", StaticDetails.LandingPage_Manga)
+	@await Component.InvokeAsync("LandingPageBooks", StaticDetails.LandingPage_Fantasy)
+	@await Component.InvokeAsync("LandingPageBooks", StaticDetails.LandingPage_ScienceFiction)
+	@await Component.InvokeAsync("LandingPageBooks", StaticDetails.LandingPage_Romance)
+	<div class="py-4 signup text-center">
+		<h1 class="fw-bolder pb-4 text-uppercase">Sign up <br/> for our Newsletter</h1>
+		<div class="pb-4">We'll give you just the right amount of love! <br /> Sign up for our weekly update and be the first to know about our newest plan.</div>
+		<div class="d-flex justify-content-center align-items-center pb-4">
+			<div class="d-none d-sm-block me-sm-3">Email address</div>
+			<input type="email" class="col-6 col-sm-3 me-3" placeholder="abc@gmail.com">
+			<button>SIGN UP</button>
+		</div>
+
+	</div>
 </div>
+
+@section Scripts{
+	<script>
+		$(document).ready(function () {
+			$(window).scroll(function () {
+				var scrollPosition = $(this).scrollTop();
+				var scrollThreshold = 300;
+
+				var navbar = $('header nav');
+
+				if (scrollPosition > scrollThreshold) {
+					navbar.removeClass('bg-opacity-75');
+					navbar.addClass('bg-navbar');
+				} else {
+					navbar.addClass('bg-opacity-75');
+					navbar.removeClass('bg-navbar');
+				}
+			});
+		});
+	</script>
+}

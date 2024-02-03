@@ -1,0 +1,22 @@
+﻿@using Bookstore.ViewComponents
+@model LandingPageBooksViewModel
+
+<div class="book-criteria container py-5">
+	<h2 class="fw-bold">@Model.Criteria</h2>
+	<div class="list-group list-group-horizontal text-nowrap">
+		@foreach (var book in Model.BookList)
+		{
+			<img class="list-group-item list-group-item-action" src="@book.ImageUrl" title="@book.Title" data-book-id="@book.BookId">
+		}
+	</div>
+</div>
+
+
+<script>
+	$(document).ready(function () {
+		$(".landing-page .book-criteria .list-group-item-action").click(function () {
+			var bookId = $(this).data('book-id');
+			window.location.href = '@Url.Action("Details", "Home", new { id = "" })' + '/' + bookId;
+		});
+	});
+</script>

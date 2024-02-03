@@ -1,5 +1,5 @@
 ﻿@model List<Book>
-<div class="col-12 col-lg-10 list-group list-group-horizontal text-nowrap overflow-auto">
+<div class="col-12 list-group list-group-horizontal text-nowrap overflow-auto">
 	@foreach (var book in Model)
 	{
 		<img class="list-group-item list-group-item-action" src="@book.ImageUrl" title="@book.Title" data-book-id="@book.BookId">

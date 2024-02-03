@@ -8,10 +8,13 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.Routing;
+using SmartBreadcrumbs.Attributes;
+using SmartBreadcrumbs.Nodes;
 
 namespace Bookstore.Areas.Customer.Controllers
 {
 	[Area("Customer")]
+	[DefaultBreadcrumb]
 	public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -22,19 +25,22 @@ namespace Bookstore.Areas.Customer.Controllers
             _logger = logger;
             _unitOfWork = unitOfWork;
         }
-
+		
 		public IActionResult Index()
 		{
+			var node = new MvcBreadcrumbNode("Index", "Home", "Home");
+			ViewData["BreadcrumbNode"] = node;
 			return View();
 		}
 
+		[Breadcrumb(Title = "Books")]
 		public async Task<IActionResult> Books(string? searchString, string? sortType, List<string> categories, List<string> authors, List<string> publishers, int? pageNumber, string? lower_price, string? upper_price)
 		{
 			IEnumerable<Book> books = await _unitOfWork.BookRepo.GetAllAsync(IncludeProperties: "Category");
 
 			if (!string.IsNullOrEmpty(searchString))
 			{
-				books = books.Where(p => p.Title.ToUpper().Contains(searchString.ToUpper()));
+				books = books.Where(p => p.Title.ToUpper().Contains(searchString.ToUpper()) || p.Author.ToUpper().Contains(searchString.ToUpper()));
 			}
 			var initialBooks = books;
 
@@ -83,7 +89,8 @@ namespace Bookstore.Areas.Customer.Controllers
 				high = double.Parse(upper_price);
 				if (hasBooks)
 				{
-					books = books.Where(p => p.DiscountPrice <= high);
+					if (high != 0)
+						books = books.Where(p => p.DiscountPrice <= high);
 					isFirstSearched = false;
 				}
 			}
@@ -122,11 +129,25 @@ namespace Bookstore.Areas.Customer.Controllers
 				SearchString = searchString,
 				SortType = (string.IsNullOrEmpty(sortType)) ? "" : sortType,
 				MinPrice = low != -1 ? low : null,
-				MaxPrice = high != -1 ? high : null
+				MaxPrice = high != -1 ? high : null,
+				TotalCount = books.Count()
 			};
 
 
 			return View(bookHomePageViewModel);
+		}
+
+		[HttpPost]
+		public async Task<JsonResult> SearchAutocomplete(string Prefix)
+		{
+			var upperPrefix = Prefix.ToUpper();
+			var bookNameInfo = (await _unitOfWork.BookRepo.GetAllAsync(b => b.Title.ToUpper().Contains(upperPrefix))).OrderBy(b => b.Title).Take(6).Select(b => new { Name = b.Title, Image = b.ImageUrl, b.Author, price1=b.OriginPrice, price2 = b.DiscountPrice, StartIndex = b.Title.ToUpper().IndexOf(upperPrefix), Id = b.BookId, type = 0 });
+			if (bookNameInfo.Count() < 6)
+			{
+				var bookAuthorInfo = (await _unitOfWork.BookRepo.GetAllAsync(b => b.Author.ToUpper().Contains(upperPrefix))).OrderBy(b => b.Title).Take(6-bookNameInfo.Count()).Select(b => new { Name = b.Title, Image = b.ImageUrl, b.Author, price1 = b.OriginPrice, price2 = b.DiscountPrice, StartIndex = b.Author.ToUpper().IndexOf(upperPrefix), Id = b.BookId, type = 1 });
+				bookNameInfo = bookNameInfo.Concat(bookAuthorInfo);
+			}
+			return Json(bookNameInfo);
 		}
 
 		[HttpPost]
@@ -173,6 +194,11 @@ namespace Bookstore.Areas.Customer.Controllers
 				BookId = id
 			};
 
+			var booksPage = new MvcBreadcrumbNode("Books", "Home", "Books");
+			var detailPage = new MvcBreadcrumbNode("Details", "Home", shoppingCart.Book.Title) { Parent = booksPage };
+			ViewData["BreadcrumbNode"] = detailPage;
+		
+
 			return View(shoppingCart);
 		}
 
@@ -215,6 +241,7 @@ namespace Bookstore.Areas.Customer.Controllers
 			return ViewComponent("Cart");
 		}
 
+		[Breadcrumb(FromAction = "Index", Title = "Privacy")]
 		public IActionResult Privacy()
 		{
 			return View();
@@ -225,10 +252,14 @@ namespace Bookstore.Areas.Customer.Controllers
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 		}
+
+		[Breadcrumb(FromAction = "Index", Title = "About")]
 		public IActionResult About()
 		{
 			return View();
 		}
+
+		[Breadcrumb(FromAction = "Index", Title = "Contact")]
 		public IActionResult Contact()
 		{
 			return View();

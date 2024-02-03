@@ -1,95 +1,119 @@
 ﻿@model BookEditViewModel
-<div class="container">
+<div class="container py-3 create_book_page">
 	<form method="post" enctype="multipart/form-data" onkeydown="return event.key != 'Enter';">
 		<input asp-for="Book.BookId" hidden />
 		<input asp-for="Book.ImageUrl" hidden />
-		<div class="border p-3 mt-4">
-			<div class="row pb-2">
-				<h2 class="text-dark">@(Model.Book.BookId != 0 ? "Update" : "Create") Book</h2>
-				<hr />
-			</div>
-			<div class="mb-3 row p-1">
-				<label asp-for="Book.Title" class="p-0"></label>
-				<input asp-for="Book.Title" class="form-control border-0 shadow" />
-				<span asp-validation-for="Book.Title" class="text-danger"></span>
-			</div>
-			<div class="mb-3 row p-1">
-				<label asp-for="Book.Description" class="p-0"></label>
-				<textarea asp-for="Book.Description" class="form-control border-0 shadow"></textarea>
-				<span asp-validation-for="Book.Description" class="text-danger"></span>
-			</div>
-			<div class="mb-3 row p-1">
-				<label asp-for="Book.Author" class="p-0"></label>
-				<input asp-for="Book.Author" class="form-control border-0 shadow" />
-				<span asp-validation-for="Book.Author" class="text-danger"></span>
-			</div>
-			<div class="mb-3 row p-1">
-				<label asp-for="Book.ISBN" class="p-0"></label>
-				<input asp-for="Book.ISBN" class="form-control border-0 shadow" />
-				<span asp-validation-for="Book.ISBN" class="text-danger"></span>
-			</div>
-			<div class="row mb-3 p-1">
-				<label asp-for="Book.LanguageId" class="p-0"></label>
-				<select asp-for="Book.LanguageId" asp-items="@Model.LanguageList" class="form-select border-0 shadow">
-					<option disabled selected>--Select Language--</option>
-				</select>
-				<span asp-validation-for="Book.LanguageId" class="text-danger"></span>
-			</div>
-			<div class="mb-3 row p-1">
-				<label asp-for="Book.PagesCount" class="p-0"></label>
-				<input asp-for="Book.PagesCount" class="form-control border-0 shadow" />
-				<span asp-validation-for="Book.PagesCount" class="text-danger"></span>
-			</div>
-			<div class="mb-3 row p-1">
-				<label asp-for="Book.PublicationDate" class="p-0"></label>
-				<input type="date" asp-for="Book.PublicationDateUI" class="form-control border-0 shadow"/>
-			</div>
-			<div class="mb-3 row p-1">
-				<label asp-for="Book.Publisher" class="p-0"></label>
-				<input asp-for="Book.Publisher" class="form-control border-0 shadow" />
-				<span asp-validation-for="Book.Publisher" class="text-danger"></span>
-			</div>
-			<div class="mb-3 row p-1">
-				<label asp-for="Book.OriginPrice" class="p-0"></label>
-				<input asp-for="Book.OriginPrice" class="form-control border-0 shadow" />
-				<span asp-validation-for="Book.OriginPrice" class="text-danger"></span>
-			</div>
-			<div class="mb-3 row p-1">
-				<label asp-for="Book.DiscountPrice" class="p-0"></label>
-				<input asp-for="Book.DiscountPrice" class="form-control border-0 shadow" />
-				<span asp-validation-for="Book.DiscountPrice" class="text-danger"></span>
-			</div>
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-6">
-						<div class="row mb-3 p-1">
-							<label asp-for="Book.CategoryID" class="p-0"></label>
-							<select asp-for="Book.CategoryID" asp-items="@Model.CategoryList" class="form-select border-0 shadow">
-								<option disabled selected>--Select Category--</option>
-							</select>
-							<span asp-validation-for="Book.CategoryID" class="text-danger"></span>
-						</div>
-						<div class="row mb-3 p-1">
-							<label asp-for="Book.ImageUrl" class="p-0"></label>
-							<input type="file" name="file" id="bookImage" class="form-control border-0 shadow" />
-							<span asp-validation-for="Book.ImageUrl" class="text-danger"></span>
-						</div>
+		<input asp-for="Book.CreatedAt" hidden />
+		<input asp-for="Book.CreatedBy" hidden />
+		<div class="row pb-2">
+			<h2 class="text-dark fw-bold text-center">@(Model.Book.BookId != 0 ? "Update" : "Create") Book</h2>
+		</div>
+		<div class="mt-2 d-flex justify-content-around align-items-stretch">
+			<div class="col-5">
+				<div class="mb-3 row p-1">
+					<label asp-for="Book.Title" class="p-0 fw-bold"></label>
+					<input asp-for="Book.Title" class="form-control border-0 shadow" />
+					<span asp-validation-for="Book.Title" class="text-danger"></span>
+				</div>
+				<div class="mb-3 row p-1">
+					<label asp-for="Book.Description" class="p-0 fw-bold"></label>
+					<textarea asp-for="Book.Description" class="form-control border-0 shadow"></textarea>
+					<span asp-validation-for="Book.Description" class="text-danger"></span>
+				</div>
+				<div class="mb-3 row d-flex justify-content-between">
+					<div class="col-6 ps-0">
+						<label asp-for="Book.Author" class="p-0 fw-bold"></label>
+						<input asp-for="Book.Author" class="form-control border-0 shadow" />
+						<span asp-validation-for="Book.Author" class="text-danger"></span>
 					</div>
-					<div class="col-2"></div>
-					<div class="col-4 d-flex">
-						<img id="imgPreview" src="@Model.Book.ImageUrl" style="width:100%; border-radius:5px; border:1px solid #bbb9b9" class="img-fluid" />
+					<div class="col-6 pe-0">
+						<label asp-for="Book.Publisher" class="p-0 fw-bold"></label>
+						<input asp-for="Book.Publisher" class="form-control border-0 shadow" />
+						<span asp-validation-for="Book.Publisher" class="text-danger"></span>
 					</div>
 				</div>
+
+				<div class="mb-3 row d-flex justify-content-between">
+					<div class="col-6 ps-0">
+						<label asp-for="Book.ISBN" class="p-0 fw-bold"></label>
+						<input asp-for="Book.ISBN" class="form-control border-0 shadow" />
+						<span asp-validation-for="Book.ISBN" class="text-danger"></span>
+					</div>
+					<div class="col-6 pe-0">
+						<label asp-for="Book.PagesCount" class="p-0 fw-bold"></label>
+						<input asp-for="Book.PagesCount" class="form-control border-0 shadow" />
+						<span asp-validation-for="Book.PagesCount" class="text-danger"></span>
+					</div>
+				</div>
+
+				<div class="mb-3 row d-flex justify-content-between">
+					<div class="col-6 ps-0">
+						<label asp-for="Book.LanguageId" class="p-0 fw-bold"></label>
+						<select asp-for="Book.LanguageId" asp-items="@Model.LanguageList" class="form-select border-0 shadow">
+							<option disabled selected>--Select Language--</option>
+						</select>
+						<span asp-validation-for="Book.LanguageId" class="text-danger"></span>
+					</div>
+					<div class="col-6 pe-0">
+						<label asp-for="Book.CategoryID" class="p-0 fw-bold"></label>
+						<select asp-for="Book.CategoryID" asp-items="@Model.CategoryList" class="form-select border-0 shadow">
+							<option disabled selected>--Select Category--</option>
+						</select>
+						<span asp-validation-for="Book.CategoryID" class="text-danger"></span>
+					</div>
+				</div>
+
+				<div class="mb-3 row p-1">
+					<label asp-for="Book.PublicationDate" class="p-0 fw-bold"></label>
+					<input type="date" asp-for="Book.PublicationDateUI" class="form-control border-0 shadow" />
+				</div>
+				<div class="mb-3 row d-flex justify-content-between">
+					<div class="col-6 ps-0">
+						<label asp-for="Book.OriginPrice" class="p-0 fw-bold"></label>
+						<input asp-for="Book.OriginPrice" class="form-control border-0 shadow" />
+						<span asp-validation-for="Book.OriginPrice" class="text-danger"></span>
+					</div>
+					<div class="col-6 pe-0">
+						<label asp-for="Book.DiscountPrice" class="p-0 fw-bold"></label>
+						<input asp-for="Book.DiscountPrice" class="form-control border-0 shadow" />
+						<span asp-validation-for="Book.DiscountPrice" class="text-danger"></span>
+					</div>
+				</div>
 			</div>
-			<div class="row">
-				<div class="col-6 col-md-3">
-					<button type="submit" class="btn btn-dark form-control">@(Model.Book.BookId != 0 ? "Update" : "Create")</button>
-				</div>
-				<div class="col-6 col-md-3">
-					<a asp-controller="Book" asp-action="Index" class="btn btn-outline-dark text-dark form-control">
-						Back To List
-					</a>
-				</div>
+
+			<div class="col-5">
+				<label asp-for="Book.ImageUrl" class="p-0 fw-bold"></label>
+				@{
+					var hasImage = !string.IsNullOrEmpty(Model.Book.ImageUrl);
+				}
+
+					<div class="wrapper d-flex align-items-center justify-content-center w-100 h-75"
+					 style="border-style: @(hasImage ? "solid" : "dashed")">
+						<div class="image h-100 w-100 d-flex justify-content-center align-items-center">
+							<input type="file" name="file" id="bookImage" class="d-none w-100 h-100" />
+							<label for="bookImage" class="w-100 h-100">
+								<img id="imgPreview" src="@Model.Book.ImageUrl" class="w-100 h-100" />
+							</label>
+						<div class="cancel-button @(hasImage ? "" : "d-none")"><i class="bi bi-x-circle"></i></div>
+						</div>
+
+						<div class="content text-center @(hasImage ? "d-none" : "")">
+							<div class="upload-icon fs-1"><i class="bi bi-cloud-upload"></i></div>
+							<div class="no-img-text">No file chosen</div>
+						</div>
+					</div>
+				<span id="fileUploadErrorMessage" class="text-danger"></span>
+				
+			</div>
+		</div>
+		<div class="d-flex justify-content-center">
+			<div class="col-6 col-md-2 me-3">
+				<button type="submit" class="btn btn-dark form-control fw-bold">@(Model.Book.BookId != 0 ? "Update" : "Create")</button>
+			</div>
+			<div class="col-6 col-md-2">
+				<a asp-controller="Book" asp-action="Index" class="btn btn-outline-dark text-dark form-control back-btn">
+					Back To List
+				</a>
 			</div>
 		</div>
 	</form>
@@ -106,28 +130,51 @@
 			$("#bookImage").change(function () {
 				const file = this.files[0];
 				if (file) {
-					let reader = new FileReader();
-					reader.onload = function (event) {
-						$("#imgPreview")
-							.attr("src", event.target.result);
-					};
-					reader.readAsDataURL(file);
+					const formData = new FormData();
+					formData.append("file", file);
+
+					$.ajax({
+						url: "/Admin/Book/ValidateFile",
+						type: "POST",
+						data: formData,
+						contentType: false,
+						processData: false,
+						success: function (response) {
+							if (response.success) {
+								$("#imgPreview").show();
+								$("#fileUploadErrorMessage").hide();
+								$(".content").toggleClass("d-none");
+								let reader = new FileReader();
+								reader.onload = function (event) {
+									$("#imgPreview").attr("src", event.target.result);
+								};
+								reader.readAsDataURL(file);
+
+								$(".cancel-button").toggleClass("d-none");;
+								$(".wrapper").css("border", "1px solid black");
+							} else {
+								
+								$("#fileUploadErrorMessage").show();
+								$("#fileUploadErrorMessage").text(response.error);
+							}
+						},
+						error: function (xhr, textStatus, errorThrown) {
+							console.error("Error: " + xhr.responseText);
+						}
+					});
 				}
 			});
 		});
-	</script>
-	<script>
-		tinymce.init({
-			selector: 'textarea',
-			plugins: 'ai tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
-			toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-			tinycomments_mode: 'embedded',
-			tinycomments_author: 'Author name',
-			mergetags_list: [
-				{ value: 'First.Name', title: 'First Name' },
-				{ value: 'Email', title: 'Email' },
-			],
-			ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant"))
+
+		$(".cancel-button").click(function () {
+
+			$(".cancel-button").toggleClass("d-none");
+			$(".wrapper").css("border", "1px dashed black");
+			$("#bookImage").val('');
+			$("#imgPreview").removeAttr("src");
+			$("#imgPreview").hide();
+			$(".content").toggleClass("d-none");
+			console.log(3);
 		});
 	</script>
 }

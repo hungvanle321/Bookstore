@@ -5,28 +5,58 @@ using Bookstore.DataAccess.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Bookstore.Utility;
-
+using SmartBreadcrumbs.Extensions;
+using System.Reflection;
+using Bookstore.Models;
+using Microsoft.AspNetCore.Authentication.Twitter;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddBreadcrumbs(Assembly.GetExecutingAssembly(), options =>
+{
+	options.TagName = "nav";
+	options.TagClasses = "";
+	options.OlClasses = "breadcrumb";
+	options.LiClasses = "breadcrumb-item";
+	options.ActiveLiClasses = "breadcrumb-item active";
+});
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 	.AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.ConfigureApplicationCookie(options => {
 	options.LoginPath = $"/Identity/Account/Login";
 	options.LogoutPath = $"/Identity/Account/Logout";
 	options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
-//builder.Services.AddAuthentication().AddFacebook(option =>
-//{
-//	option.AppId = builder.Configuration["Authentication:Facebook:AppId"];
-//	option.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
-//	option.AccessDeniedPath = $"/Identity/Account/Register";
-//});
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+	options.Lockout.MaxFailedAccessAttempts = 5;
+});
+
+builder.Services.AddAuthentication().AddFacebook(option =>
+{
+	option.AppId = builder.Configuration["Authentication:Facebook:AppId"];
+	option.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
+	option.AccessDeniedPath = $"/Identity/Account/Register";
+}).AddTwitter(twitterOptions =>
+{
+	twitterOptions.ConsumerKey = builder.Configuration["Authentication:Twitter:ConsumerAPIKey"];
+	twitterOptions.ConsumerSecret = builder.Configuration["Authentication:Twitter:ConsumerSecret"];
+}).AddGoogle(googleOptions =>
+{
+    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+}).AddMicrosoftAccount(microsoftOptions =>
+{
+    microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"];
+    microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"];
+});
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

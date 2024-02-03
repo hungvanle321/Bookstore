@@ -16,10 +16,9 @@
 
 	input[type=checkbox] {
 		-ms-transform: scale(1.5);
-		-moz-transform: scale(1.5); 
+		-moz-transform: scale(1.5);
 		-webkit-transform: scale(1.5);
 		-o-transform: scale(1.5);
-		
 	}
 </style>
 
@@ -28,11 +27,12 @@
 		<div class="row d-flex justify-content-center align-items-center h-100">
 			<div class="col">
 				<div class="table-responsive p-4">
-					<h2 class="fs-2 fw-bold my-2" style="font-family: GT Super Bold, serif;">Cart</h2>
+					<h2 class="fs-2 fw-bold my-2">Cart</h2>
 					<table class="table">
 						<thead>
 							<tr>
-								<th scope="col"></th>
+								<th scope="col">
+								</th>
 								<th scope="col">Item</th>
 								<th scope="col">Category</th>
 								<th scope="col" class="text-center">Quantity</th>
@@ -48,8 +48,7 @@
 									<td class="text-center align-middle">
 										<input type="checkbox" id="customCheck-@shoppingCart.BookId" data-subtotal="@{
 											var subTotal = shoppingCart.Book.DiscountPrice * @shoppingCart.Count;
-										}
-									@subTotal">
+										}@subTotal">
 									</td>
 									<th scope="row">
 										<div class="d-flex align-items-center">
@@ -73,7 +72,7 @@
 												<i class="bi bi-dash-lg"></i>
 											</button>
 											<input asp-for="@shoppingCart.Count" min="0" name="quantity" type="number" id="input-@shoppingCart.BookId"
-												   class="form-control form-control-sm text-center"/>
+												   class="form-control form-control-sm text-center" />
 											<button class="btn px-2 increase-cart" data-application-user-id="@shoppingCart.ApplicationUserId" data-book-id="@shoppingCart.BookId">
 												<i class="bi bi-plus-lg"></i>
 											</button>
@@ -112,7 +111,7 @@
 						<div class="d-flex justify-content-between align-items-center mx-3">
 							<a asp-area="Customer" asp-controller="Home" asp-action="Books" class="col-2 btn btn-outline-primary text-uppercase btn-sm"><small>Continue Shopping</small></a>
 
-							<button type="button" class="col-2 btn btn-dark fw-bold text-white btn-block btn-lg checkout-btn">
+							<button id="checkout-button" class="col-2 btn fw-bold text-white btn-block btn-lg checkout-btn disabled-link">
 								<div class="text-center">
 									CHECKOUT
 								</div>
@@ -129,12 +128,18 @@
 </div>
 
 <script>
-	function ReloadTotalPrice(){
+	function ReloadTotalPrice() {
 		var total = 0;
 		$('input[type="checkbox"]:checked').each(function () {
 			total += parseFloat($(this).data('subtotal'));
 		});
 		$('#total-price').text(total.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+		if (total > 0) {
+			$('#checkout-button').removeClass('disabled-link');
+		}
+		else {
+			$('#checkout-button').addClass('disabled-link');
+		}
 	}
 
 	$(document).ready(function () {
@@ -163,7 +168,7 @@
 						$(inputId).val(currentCount - 1);
 						$(checkboxId).data('subtotal', data.subTotal);
 						$(subTotalId).text(data.subTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
-						
+
 					}
 					else {
 						var rowId = '#row-' + bookId;
@@ -226,6 +231,27 @@
 
 				}
 			});
+		});
+
+
+		$("#checkout-button").click(function () {
+			var dataToSend = {};
+
+			$('input[type="checkbox"]').each(function (index) {
+				if ($(this).is(":checked")) {
+					var bookId = $(this).attr('id').substring(12);
+					var inputId = '#input-' + bookId;
+					var currentCount = parseInt($(inputId).val(), 10);
+					dataToSend[index] = [parseInt(bookId, 10), currentCount];
+				}
+			});
+
+			console.log(dataToSend);
+			var jsonData = JSON.stringify(dataToSend);
+			$.cookie("jsonData", jsonData, { expires: 1 }); 
+			
+			window.location.href = '/Customer/Cart/Checkout';
+
 		});
 	});
 </script>

@@ -6,71 +6,83 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="icon" type="image/x-icon" href="~/images/favicon.ico">
 	<title>@ViewData["Title"]</title>
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<link rel="stylesheet" href="~/Bookstore.styles.css" asp-append-version="true" />
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 	<link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 </head>
 <body>
 	<header>
-		<div class="@(Context?.Request?.RouteValues["controller"]?.ToString() == "Home" && ViewData["Title"]?.ToString() == "Home Page" ? "header" : "")">
-			<nav class="navbar navbar-expand-lg @(Context?.Request?.RouteValues["controller"]?.ToString() == "Home" && ViewData["Title"]?.ToString() == "Home Page" ? "bg-opacity-75" : "bg-black")" style="padding: 15px 0px; z-index: 999;">
+		@{
+			bool isHomePage = Context?.Request?.RouteValues["controller"]?.ToString() == "Home" && ViewData["Title"]?.ToString() == "Home Page";
+		}
+		<div class="@(isHomePage ? "header" : "")">
+			<nav class="navbar navbar-expand-lg fixed-top @(isHomePage ? "bg-opacity-75" : "bg-navbar")" style="padding: 10px 0px;">
 				<div class="container-fluid">
-					<div class="navbar-collapse d-sm-inline-flex justify-content-between">
-						<div class="col-12 col-sm-5 col-lg-1">
+					<div class="navbar-collapse d-lg-inline-flex justify-content-between">
+						<div class="col-12 col-lg-2 pb-2 pb-lg-0 text-center">
 							<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-								<img src="~/images/home_banner/logo.png">
+								<img src="~/images/home_banner/logo.png" class="w-50" alt="Logo">
 							</a>
-							<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarSupportedContent"
-									aria-expanded="false" aria-label="Toggle navigation">
-								<span class="navbar-toggler-icon"></span>
-							</button>
 						</div>
-						<div class="d-lg-inline-flex col-sm-7 col-lg-12" id="navbarContent">
-							<div class="nav-item input-group col-12 col-lg-4 col-xl-6">
-								<form asp-area="Customer" asp-controller="Home" asp-action="Books" class="d-flex col-12 justify-content-center" method="get">
-									<input type="text" placeholder="Search" name="searchString" id="searchStringInput" class="col-6">
+						<div class="nav-item input-group col-12 col-lg-4 d-flex justify-content-center" id="searchGroup">
+							<form asp-area="Customer" asp-controller="Home" asp-action="Books" class="d-flex col-8" method="get">
+								<div class="input-group col-12 search-group">
+									<input type="text" placeholder="Search books, authors" name="searchString" id="searchStringInput" class="form-control fs-6" autocomplete="off">
+									<div class="suggest-menu bg-white w-100"></div>
 									<div class="input-group-append">
-										<button class="btn btn-outline-secondary" type="submit">
+										<button class="btn btn-outline-secondary search-icon h-100" disabled>
 											<i class="fa fa-search"></i>
 										</button>
 									</div>
-								</form>
-							</div>
-							<div class="d-flex align-items-center col-12 col-lg-7 col-xl-5">
+								</div>
+							</form>
+						</div>
+						<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarSupportedContent"
+								aria-expanded="false" aria-label="Toggle navigation">
+							<span class="navbar-toggler-icon"></span>
+						</button>
+						<div class="d-lg-inline-flex col-12">
+							<div class="d-flex col-10 col-lg-6" id="togglerGroup">
 								@{
 									var navItems = new List<dynamic>
 								{
-								new { Controller = "Home", Action = "Index", Title = "Home Page", Text = "HOME"},
-								new { Controller = "Home", Action = "Books", Title = "Library", Text = "BOOKS"},
-								new { Controller = "Home", Action = "About", Title = "About", Text = "ABOUT"},
-								new { Controller = "Home", Action = "Contact", Title = "Contact", Text = "CONTACT"}
+									new { Controller = "Home", Action = "Index", Text = "Home"},
+									new { Controller = "Home", Action = "Books", Text = "Books"},
+									new { Controller = "Home", Action = "About", Text = "About"},
+									new { Controller = "Home", Action = "Contact", Text = "Contact"}
 								};
 								}
-
-								<ul class="navbar-nav me-auto nav-underline">
-									@foreach (var item in navItems)
-									{
-										<li class="nav-item @(Context?.Request?.RouteValues["controller"]?.ToString() == item.Controller && ViewData["Title"]?.ToString() == item.Title ? "active" : "")">
-											<a class="nav-link @(Context?.Request?.RouteValues["controller"]?.ToString() == item.Controller && ViewData["Title"]?.ToString() == item.Title ? "active" : "")"
-											   asp-area="Customer" asp-controller="@item.Controller" asp-action="@item.Action">
-												@item.Text
-											</a>
-										</li>
-									}
-								</ul>
-								<div class="d-flex align-items-center justify-content-around col-5 col-lg-3 col-xl-3">
+								<div class="col-12 col-lg-9 d-lg-flex justify-content-center">
+									<ul class="navbar-nav col-8 d-lg-flex justify-content-between align-items-center" id="navbarContent">
+										@foreach (var item in navItems)
+										{
+											<li class="nav-item @(ViewData["NavTab"] == item.Text ? "active" : "")">
+												<a class="nav-link @(ViewData["NavTab"] == item.Text ? "active" : "")"
+												   asp-area="Customer" asp-controller="@item.Controller" asp-action="@item.Action">
+													@item.Text.ToUpper()
+												</a>
+											</li>
+										}
+									</ul>
+								</div>
+								
+								<div class="d-flex align-items-center justify-content-end col-5 col-lg-3 col-xl-3" id="cart-and-login">
 									<div class="col-2 text-center">
 										<a class="nav-link text-white" id="cartIcon" asp-area="Customer" asp-controller="Cart" asp-action="Index">
 											@await Component.InvokeAsync("Cart")
 										</a>
 									</div>
+									<div class="col-1"></div>
 									<partial name="_LoginPartial" />
 								</div>
 							</div>
@@ -80,19 +92,16 @@
 			</nav>
 		</div>
 	</header>
-	<main role="main" class="pb-3">
+	<main role="main" id="body-content">
+		@if (!isHomePage)
+		{
+			<div class="header-placeholder"></div>
+			<breadcrumb style="--bs-breadcrumb-divider: '>';"></breadcrumb>
+		}
 		<partial name="_Notification" />
 		@RenderBody()
 	</main>
-
-	<footer class="footer text-muted h-auto">
-		<div class="text-center">
-			&copy; 2023 - Bookstore - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-		</div>
-	</footer>
-
-	<script src="~/lib/jquery/dist/jquery.min.js"></script>
-	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<partial name="_Footer"/>
 	<script src="~/js/site.js" asp-append-version="true"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>

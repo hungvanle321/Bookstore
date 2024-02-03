@@ -5,22 +5,24 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Bookstore.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using SmartBreadcrumbs.Nodes;
 
 namespace Bookstore.Areas.Identity.Pages.Account.Manage
 {
     public class ChangePasswordModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<ChangePasswordModel> _logger;
 
         public ChangePasswordModel(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             ILogger<ChangePasswordModel> logger)
         {
             _userManager = userManager;
@@ -85,7 +87,11 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var hasPassword = await _userManager.HasPasswordAsync(user);
+			var accountPage = new RazorPageBreadcrumbNode("/Identity/Account/Manage", "Account");
+			var page = new RazorPageBreadcrumbNode("/Identity/Account/Manage/ChangePassword", "Change Password") { Parent = accountPage };
+			ViewData["BreadcrumbNode"] = page;
+
+			var hasPassword = await _userManager.HasPasswordAsync(user);
             if (!hasPassword)
             {
                 return RedirectToPage("./SetPassword");
