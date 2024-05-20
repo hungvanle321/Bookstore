@@ -1,5 +1,5 @@
 
-An online bookstore, employing the MVC architecture to facilitate seamless book browsing, secure user authentication, and efficient e-commerce transactions. Multi=language support and dark mode !
+An online bookstore, employing the MVC architecture to facilitate seamless book browsing, secure user authentication, and efficient e-commerce transactions. Multi-language support and dark mode !
 
 ## Technology Used
 - .NET MVC (.NET 6)
