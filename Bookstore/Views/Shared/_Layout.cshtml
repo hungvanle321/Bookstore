@@ -1,118 +1,185 @@
 ﻿@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Localization;
 @inject IHttpContextAccessor httpContextAccessor
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="icon" type="image/x-icon" href="~/images/favicon.ico">
-	<title>@ViewData["Title"]</title>
-	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-	<link rel="stylesheet" href="~/Bookstore.styles.css" asp-append-version="true" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-	<link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z9YS5TZNJ6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-Z9YS5TZNJ6', {
+            'page_path': window.location.pathname,
+            'custom_map': {
+                'dimension1': 'merchantId',
+                'dimension2': 'orderId',
+                'dimension3': 'event_label',
+                'metric1': 'loading_time',
+                'metric2': 'page_response_time'
+            }
+        });
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="~/images/favicon.ico">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="~/Bookstore.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/7.2.1/css/flag-icons.min.css" integrity="sha512-bZBu2H0+FGFz/stDN/L0k8J0G8qVsAL0ht1qg5kTwtAheiXwiRKyCq1frwfbSFSJN3jooR5kauE0YjtPzhZtJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-	<header>
-		@{
-			bool isHomePage = Context?.Request?.RouteValues["controller"]?.ToString() == "Home" && ViewData["Title"]?.ToString() == "Home Page";
-		}
-		<div class="@(isHomePage ? "header" : "")">
-			<nav class="navbar navbar-expand-lg fixed-top @(isHomePage ? "bg-opacity-75" : "bg-navbar")" style="padding: 10px 0px;">
-				<div class="container-fluid">
-					<div class="navbar-collapse d-lg-inline-flex justify-content-between">
-						<div class="col-12 col-lg-2 pb-2 pb-lg-0 text-center">
-							<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-								<img src="~/images/home_banner/logo.png" class="w-50" alt="Logo">
-							</a>
-						</div>
-						<div class="nav-item input-group col-12 col-lg-4 d-flex justify-content-center" id="searchGroup">
-							<form asp-area="Customer" asp-controller="Home" asp-action="Books" class="d-flex col-8" method="get">
-								<div class="input-group col-12 search-group">
-									<input type="text" placeholder="Search books, authors" name="searchString" id="searchStringInput" class="form-control fs-6" autocomplete="off">
-									<div class="suggest-menu bg-white w-100"></div>
-									<div class="input-group-append">
-										<button class="btn btn-outline-secondary search-icon h-100" disabled>
-											<i class="fa fa-search"></i>
-										</button>
-									</div>
-								</div>
-							</form>
-						</div>
-						<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarSupportedContent"
-								aria-expanded="false" aria-label="Toggle navigation">
-							<span class="navbar-toggler-icon"></span>
-						</button>
-						<div class="d-lg-inline-flex col-12">
-							<div class="d-flex col-10 col-lg-6" id="togglerGroup">
-								@{
-									var navItems = new List<dynamic>
-								{
-									new { Controller = "Home", Action = "Index", Text = "Home"},
-									new { Controller = "Home", Action = "Books", Text = "Books"},
-									new { Controller = "Home", Action = "About", Text = "About"},
-									new { Controller = "Home", Action = "Contact", Text = "Contact"}
-								};
-								}
-								<div class="col-12 col-lg-9 d-lg-flex justify-content-center">
-									<ul class="navbar-nav col-8 d-lg-flex justify-content-between align-items-center" id="navbarContent">
-										@foreach (var item in navItems)
-										{
-											<li class="nav-item @(ViewData["NavTab"] == item.Text ? "active" : "")">
-												<a class="nav-link @(ViewData["NavTab"] == item.Text ? "active" : "")"
-												   asp-area="Customer" asp-controller="@item.Controller" asp-action="@item.Action">
-													@item.Text.ToUpper()
-												</a>
-											</li>
-										}
-									</ul>
-								</div>
-								
-								<div class="d-flex align-items-center justify-content-end col-5 col-lg-3 col-xl-3" id="cart-and-login">
-									<div class="col-2 text-center">
-										<a class="nav-link text-white" id="cartIcon" asp-area="Customer" asp-controller="Cart" asp-action="Index">
-											@await Component.InvokeAsync("Cart")
-										</a>
-									</div>
-									<div class="col-1"></div>
-									<partial name="_LoginPartial" />
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</nav>
-		</div>
-	</header>
-	<main role="main" id="body-content">
-		@if (!isHomePage)
-		{
-			<div class="header-placeholder"></div>
-			<breadcrumb style="--bs-breadcrumb-divider: '>';"></breadcrumb>
-		}
-		<partial name="_Notification" />
-		@RenderBody()
-	</main>
-	<partial name="_Footer"/>
-	<script src="~/js/site.js" asp-append-version="true"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-	<script src="https://cdn.tiny.cloud/1/elwf2fpax7lvwobja4kb825c73kys2gdolpm2ta2lwiwgjki/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-	<script>
-		tinymce.init({
-			selector: 'textarea',
-			plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-			toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-		});
-	</script>
-	@await RenderSectionAsync("Scripts", required: false)
+    <header>
+        @{
+            var requestCulture = Context.Request.HttpContext.Features.Get<IRequestCultureFeature>();
+            var currentCulture = requestCulture?.RequestCulture.UICulture.Name;
+
+            var title = ViewData["Title"] as LocalizedHtmlString;
+            var navTab = ViewData["NavTab"] as LocalizedHtmlString;
+            bool isHomePage = Context?.Request?.RouteValues["controller"]?.ToString() == "Home" && title?.Value?.ToString() == Localizer["home_page_title"]?.Value?.ToString();
+        }
+        <div class="@(isHomePage ? "header" : "")">
+            <nav class="navbar navbar-expand-lg fixed-top @(isHomePage ? "bg-opacity-75" : "bg-navbar")" style="padding: 10px 0px;">
+                <div class="container-fluid">
+                    <div class="navbar-collapse d-lg-inline-flex justify-content-between">
+                        <div class="col-12 col-lg-2 pb-2 pb-lg-0 text-center">
+                            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                                <img src="~/images/home_banner/logo.png" class="w-50" alt="Logo">
+                            </a>
+                        </div>
+                        <div class="nav-item input-group col-12 col-lg-4 d-flex justify-content-center" id="searchGroup">
+                            <form asp-area="Customer" asp-controller="Home" asp-action="Books" class="d-flex col-8" method="get">
+                                <div class="input-group col-12 search-group">
+                                    <input type="text" placeholder="@Localizer["searchInput_placeholder"]" name="searchString" id="searchStringInput" class="form-control fs-6" autocomplete="off">
+                                    <div class="suggest-menu bg-white w-100"></div>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary search-icon h-100" disabled>
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="d-lg-inline-flex col-12 col-lg-6">
+                            <div class="d-flex col-12" id="togglerGroup">
+                                @{
+                                    var navItems = new List<dynamic>
+                                {
+                                new { Controller = "Home", Action = "Index", Text = Localizer["nav_home"]},
+                                new { Controller = "Home", Action = "Books", Text = Localizer["nav_books"]},
+                                new { Controller = "Home", Action = "About", Text = Localizer["nav_about"]},
+                                new { Controller = "Home", Action = "Contact", Text = Localizer["nav_contact"]}
+                                };
+                                }
+                                <div class="col-12 col-lg-8 d-lg-flex justify-content-center">
+                                    <ul class="navbar-nav @(currentCulture == "en-US" ? "col-8" : "col-10") d-lg-flex justify-content-between align-items-center" id="navbarContent">
+                                        @foreach (var item in navItems)
+                                        {
+                                            <li class="nav-item @(navTab?.Value?.ToString()  == item.Text.Value.ToString() ? "active" : "")">
+                                                <a class="nav-link @(navTab?.Value?.ToString() == item.Text.Value.ToString() ? " active" : "" )"
+                                                   asp-area="Customer" asp-controller="@item.Controller" asp-action="@item.Action">
+                                                    @item.Text
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+
+                                <div class="col-5 col-lg-1 dropdown">
+                                    <button type="button" class="btn btn-primary dropdown-toggle bg-white text-dark" data-bs-toggle="dropdown">
+                                        @if (currentCulture == "en-US")
+                                        {
+                                            <span class="fi fi-us"></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="fi fi-vn"></span>
+                                        }
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a asp-area="Customer" asp-controller="Home" asp-action="ChangeLanguage" asp-route-culture="en-US" class="dropdown-item">
+                                                <span class="fi fi-us me-2"></span>
+                                                <span class="@(currentCulture == "en-US" ? "text-danger" : "")">English</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a asp-area="Customer" asp-controller="Home" asp-action="ChangeLanguage" asp-route-culture="vi-VN" class="dropdown-item">
+                                                <span class="fi fi-vn me-2"></span>
+                                                <span class="@(currentCulture == "vi-VN" ? "text-danger" : "")">Tiếng Việt</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-around col-5 col-lg-3 col-xl-3" id="cart-and-login">
+                                    <div class="col-2 text-center">
+                                        <a class="nav-link text-white" id="cartIcon" asp-area="Customer" asp-controller="Cart" asp-action="Index">
+                                            @await Component.InvokeAsync("Cart")
+                                        </a>
+                                    </div>
+                                    <div class="form-check form-switch d-flex align-items-center col-2">
+                                        <input class="form-check-input bg-dark"
+                                               type="checkbox"
+                                               id="darkModeSwitch"
+                                               checked
+                                               onclick="switchDarkLight()" />
+                                    </div>
+                                    <partial name="_LoginPartial" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <main role="main" id="body-content">
+        @if (!isHomePage)
+        {
+            <div class="header-placeholder"></div>
+            <breadcrumb style="--bs-breadcrumb-divider: '>';"></breadcrumb>
+        }
+        <partial name="_Notification" />
+        @RenderBody()
+    </main>
+    <partial name="_Footer" />
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        var element = document.body;
+        element.dataset.bsTheme = "light"
+        function switchDarkLight() {
+            element.dataset.bsTheme =
+                element.dataset.bsTheme == "light" ? "dark" : "light";
+        }
+    </script>
+    <script>
+        if (window.performance) {
+            var timeSincePageLoad = Math.round(performance.now());
+            gtag('event', 'calculate_loading_time', {
+                'loading_time': timeSincePageLoad,
+                'page_path': window.location.pathname,
+                'merchantId': generateRandomString(3),
+                'orderId': generateRandomString(4)
+            });
+        }
+    </script>
+    <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

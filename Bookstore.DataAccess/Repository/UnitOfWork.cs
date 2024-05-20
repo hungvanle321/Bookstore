@@ -13,6 +13,7 @@ namespace Bookstore.DataAccess.Repository
         public IOrderHeaderRepository OrderHeaderRepo { get; private set; }
         public IOrderDetailRepository OrderDetailRepo { get; private set; }
         public IApplicationUserRepository ApplicationUserRepo { get; private set; }
+        public ITransactionRepository TransactionRepo { get; private set; }
 
         private readonly ApplicationDbContext _context;
         public UnitOfWork(ApplicationDbContext context)
@@ -25,7 +26,7 @@ namespace Bookstore.DataAccess.Repository
             OrderDetailRepo = new OrderDetailRepository(_context);
             OrderHeaderRepo = new OrderHeaderRepository(_context);
             ApplicationUserRepo = new ApplicationUserRepository(_context);
-
+            TransactionRepo = new TransactionRepository(_context);
         }
         public async Task SaveAsync()
         {

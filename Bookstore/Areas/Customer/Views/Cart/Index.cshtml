@@ -1,4 +1,5 @@
-﻿@model ShoppingCartViewModel
+﻿@using System.Globalization;
+@model ShoppingCartViewModel
 @{
 	ViewData["Title"] = "Shopping Cart";
 }
@@ -79,12 +80,12 @@
 										</div>
 									</td>
 									<td class="align-middle">
-										<p class="text-warning text-decoration-line-through mb-0">@shoppingCart.Book.OriginPrice.ToString("c")</p>
-										<p class="fw-bold">@shoppingCart.Book.DiscountPrice.ToString("c")</p>
+										<p class="text-warning text-decoration-line-through mb-0">@shoppingCart.Book.OriginPrice.ToString("c", CultureInfo.CreateSpecificCulture("en-US"))</p>
+										<p class="fw-bold">@shoppingCart.Book.DiscountPrice.ToString("c", CultureInfo.CreateSpecificCulture("en-US"))</p>
 									</td>
 									<td class="text-end align-middle">
 										<p class="mb-0" id="subTotal-@shoppingCart.BookId">
-											@subTotal.ToString("c")
+											@subTotal.ToString("c", CultureInfo.CreateSpecificCulture("en-US"))
 										</p>
 									</td>
 									<td class="text-center align-middle">
@@ -246,7 +247,6 @@
 				}
 			});
 
-			console.log(dataToSend);
 			var jsonData = JSON.stringify(dataToSend);
 			$.cookie("jsonData", jsonData, { expires: 1 }); 
 			

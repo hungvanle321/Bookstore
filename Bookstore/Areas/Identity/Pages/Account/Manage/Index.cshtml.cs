@@ -8,6 +8,7 @@ using Bookstore.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SmartBreadcrumbs.Nodes;
 
@@ -19,17 +20,20 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IConfiguration _configuration;
+        private readonly CountryService _countryService;
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IWebHostEnvironment webHostEnvironment,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            CountryService countryService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _webHostEnvironment = webHostEnvironment;
             _configuration = configuration;
+            _countryService = countryService;
         }
 
         /// <summary>
@@ -62,19 +66,54 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
 			[Display(Name = "Name")]
 			public string Name { get; set; }
             public string AvatarPath { get; set; }
+            public string Street { get; set; }
+            public string State { get; set; }
+            public string City { get; set; }
+            [Display(Name ="Postal Code")]
+            public string PostalCode { get; set; }
+            public string Country { get; set; }
+            public List<SelectListItem> CountryList { get; set; }
+            public List<SelectListItem> StateList { get; set; }
+            public List<SelectListItem> CityList { get; set; }
         }
 
-        private async Task LoadAsync(IdentityUser user)
+        private async Task LoadAsync(ApplicationUser user)
         {
             var userInfo = await _userManager.FindByIdAsync(user.Id);            
 
             Username = userInfo.UserName;
 
+            var countries = new List<SelectListItem>();
+            foreach (var  country in await _countryService.GetCountries())
+                countries.Add(new SelectListItem { Text = country, Value = country });
+
+            var states = new List<SelectListItem>();
+            if (userInfo.Country != null)
+            {
+                foreach (var state in await _countryService.GetStates(userInfo.Country))
+                    states.Add(new SelectListItem { Text = state, Value = state });
+            }
+
+            var cities = new List<SelectListItem>();
+            if (userInfo.State != null)
+            {
+                foreach (var city in await _countryService.GetCities(userInfo.Country, userInfo.State))
+                    cities.Add(new SelectListItem { Text = city, Value = city });
+            }
+
             Input = new InputModel
             {
                 PhoneNumber = userInfo.PhoneNumber,
                 Name = userInfo.Name,
-                AvatarPath = userInfo.AvatarPath
+                AvatarPath = userInfo.AvatarPath,
+                Street = userInfo.Street,
+                PostalCode = userInfo.PostalCode,
+                CountryList = countries,
+                StateList = states,
+                CityList = cities,
+                Country = userInfo.Country,
+                State = userInfo.State,
+                City = userInfo.City
             };
         }
 
@@ -119,6 +158,18 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
             }
 
             return new JsonResult(new { success = true });
+        }
+
+        public async Task<IActionResult> OnPostStatesAsync(string country)
+        {
+            var states = await _countryService.GetStates(country);
+            return new JsonResult(states);
+        }
+
+        public async Task<IActionResult> OnPostCitiesAsync(string country, string state)
+        {
+            var cities = await _countryService.GetCities(country, state);
+            return new JsonResult(cities);
         }
 
         public async Task<IActionResult> OnPostAsync(IFormFile? file)
@@ -179,6 +230,11 @@ namespace Bookstore.Areas.Identity.Pages.Account.Manage
             }
 
             user.Name = Input.Name;
+            user.Street = Input.Street;
+            user.City = Input.City;
+            user.State = Input.State;
+            user.Country = Input.Country;
+            user.PostalCode = Input.PostalCode;
             await _userManager.UpdateAsync(user);
             
             await _signInManager.RefreshSignInAsync(user);

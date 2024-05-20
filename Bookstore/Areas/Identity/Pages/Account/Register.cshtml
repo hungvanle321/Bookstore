@@ -9,6 +9,26 @@
 <html lang="en">
 
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z9YS5TZNJ6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-Z9YS5TZNJ6', {
+            'page_path': window.location.pathname,
+            'custom_map': {
+                'dimension1': 'merchantId',
+                'dimension2': 'orderId',
+                'metric1': 'loading_time'
+            }
+        });
+
+        gtag('set', {
+            'merchantId': 'ABC',
+            'orderId': '100'
+        });
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -76,6 +96,15 @@
             </div>
         </div>
     </div>
+    <script>
+        if (window.performance) {
+            var timeSincePageLoad = Math.round(performance.now());
+            console.log(timeSincePageLoad);
+            gtag('set', {
+                'loading_time': timeSincePageLoad
+            });
+        }
+    </script>
 </body>
 
 </html>

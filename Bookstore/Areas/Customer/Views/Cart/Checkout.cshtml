@@ -1,20 +1,24 @@
-﻿@model OrderViewModel
+﻿@using System.Globalization;
+@model OrderViewModel
 @{
     ViewData["Title"] = "Checkout";
 }
-<section class="py-5">
+<section class="py-5 checkout_page">
+    <div class="d-none" id="purchaseInfo" data-merchant-id="123" data-order-id="ABC123"></div>
+    <form method="post">
     <div class="container">
         <div class="row">
             <div class="col-xl-6 mb-4">
                 <!-- Checkout -->
                 <div class="card shadow-0 border">
                     <div class="p-4">
-                        <h5 class="card-title mb-3">Customer info</h5>
+                        <h3 class="card-title fw-bold">Customer info</h3>
                         <div class="row">
                             <div class="col-12 mb-3">
                                 <p class="mb-0">Name</p>
                                 <div class="form-outline">
                                     <input type="text" asp-for="@Model.ShipName" placeholder="Type here" class="form-control" />
+                                    <span asp-validation-for="@Model.ShipName" class="text-danger text-start"></span>
                                 </div>
                             </div>
 
@@ -22,6 +26,7 @@
                                 <p class="mb-0">Phone Number</p>
                                 <div class="form-outline">
                                     <input type="tel" asp-for="@Model.ShipPhoneNumber" class="form-control" placeholder="0123456789" />
+                                    <span asp-validation-for="@Model.ShipPhoneNumber" class="text-danger text-start"></span>
                                 </div>
                             </div>
 
@@ -29,65 +34,142 @@
                                 <p class="mb-0">Email</p>
                                 <div class="form-outline">
                                     <input type="email" asp-for="@Model.ShipEmail" placeholder="example@gmail.com" class="form-control" />
+                                        <span asp-validation-for="@Model.ShipEmail" class="text-danger text-start"></span>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="mb-3">
+                        <div class="row mb-4">
+                            <div>
                                 <p class="mb-0">Address</p>
                                 <div class="form-outline">
                                     <input type="text" asp-for="@Model.ShipAddress" placeholder="Type here" class="form-control" />
+                                    <span asp-validation-for="@Model.ShipAddress" class="text-danger text-start"></span>
                                 </div>
                             </div>
-
+                            <div>
+                                <p class="mb-0">Description</p>
+                                <div class="form-outline">
+                                    <input type="text" asp-for="@Model.Description" placeholder="Type here" class="form-control" />
+                                    <span asp-validation-for="@Model.Description" class="text-danger text-start"></span>
+                                </div>
+                            </div>
                         </div>
 
-                        <hr class="my-4" />
-
-                        <h5 class="card-title mb-3">Shipping info</h5>
+                        <h3 class="card-title mb-2 fw-bold">Shipping info</h3>
 
                         <div class="row mb-3">
                             <div class="col-lg-4 mb-3">
-                                <!-- Default checked radio -->
                                 <div class="form-check h-100 border rounded-3">
                                     <div class="p-3">
-                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked />
-                                        <label class="form-check-label" for="flexRadioDefault1">
-                                            Express delivery <br />
-                                            <small class="text-muted">3-4 days via Fedex </small>
+                                        <input class="form-check-input" type="radio" id="economyShippingRadio" name="shippingOption" value="2.00" checked />
+                                        <label class="form-check-label" for="economyShippingRadio">
+                                            Economy Shipping <br />
+                                            <small class="text-muted">5-7 days</small> <br />
+                                                <small class="text-muted">@((2.0).ToString("c2", CultureInfo.CreateSpecificCulture("en-US")))</small>
                                         </label>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-4 mb-3">
-                                <!-- Default radio -->
                                 <div class="form-check h-100 border rounded-3">
                                     <div class="p-3">
-                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" />
-                                        <label class="form-check-label" for="flexRadioDefault2">
-                                            Post office <br />
-                                            <small class="text-muted">20-30 days via post </small>
+                                        <input class="form-check-input" type="radio" id="standardShippingRadio" name="shippingOption" value="1.50" />
+                                        <label class="form-check-label" for="standardShippingRadio">
+                                            Standard Shipping <br />
+                                            <small class="text-muted">3-5 days</small> <br />
+                                                <small class="text-muted">@((1.5).ToString("c2", CultureInfo.CreateSpecificCulture("en-US")))</small>
                                         </label>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-4 mb-3">
-                                <!-- Default radio -->
                                 <div class="form-check h-100 border rounded-3">
                                     <div class="p-3">
-                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3" />
-                                        <label class="form-check-label" for="flexRadioDefault3">
-                                            Self pick-up <br />
-                                            <small class="text-muted">Come to our shop </small>
+                                        <input class="form-check-input" type="radio" id="expeditedShippingRadio" name="shippingOption" value="1.00" />
+                                        <label class="form-check-label" for="expeditedShippingRadio">
+                                            Expedited Shipping <br />
+                                            <small class="text-muted">1-3 days</small> <br />
+                                                <small class="text-muted">@((1.0).ToString("c2", CultureInfo.CreateSpecificCulture("en-US")))</small>
                                         </label>
                                     </div>
+                                </div>
+                            </div>
+
+                            <h3 class="card-title mb-3 fw-bold">Payment method</h3>
+                            <div class="mb-4 mb-md-0">
+                                <div class="d-flex flex-row">
+                                    <div class="d-flex align-items-center pe-2">
+                                            @Html.RadioButtonFor(m => m.PaymentMethod, "0", new { id = "interPayment", @checked = "checked", @class = "parent-radio" })
+                                    </div>
+
+                                            <label for="interPayment"> International payment (Visa/Mastercard/JCB)</label>
+
+                                </div>
+                                @Html.CheckBoxFor(m => m.IsCardLink)
+                                @Html.LabelFor(m => m.IsCardLink, "Link this card")
+                                <div class="d-flex flex-row py-3">
+                                    <div class="d-flex align-items-center pe-2">
+                                            @Html.RadioButtonFor(m => m.PaymentMethod, "1", new { id = "domesPayment", @class = "parent-radio" })
+                                    </div>
+
+                                    <label for="domesPayment">Domestic Payment</label>
+
+                                </div>
+                                <div class="d-flex flex-row pb-3">
+                                    <div class="d-flex align-items-center pe-2">
+                                            @Html.RadioButtonFor(m => m.PaymentMethod, "2", new { id = "installmentPayment", @class = "parent-radio" })
+                                    </div>
+                                            <label for="installmentPayment">Installment Payment</label>
+                                </div>
+                                <div>
+                                    @if (Model.LinkedCard.Count > 0)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            @Html.RadioButtonFor(m => m.PaymentMethod, "3", new { id = "tokenizationPayment", @class = "parent-radio" })
+                                            <label for="cardLinkPayment" class="ps-2"> 1-click Payment (Tokenization)</label>
+                                        </div>
+                                            
+                                        @for (int i = 0; i < Model.LinkedCard.Count; i++)
+                                        {
+                                            <div class="ms-3 d-flex align-items-center">
+                                                @{
+                                                    var card = Model.LinkedCard[i];
+                                                }
+                                                @if (i == 0)
+                                                {
+                                                    @Html.RadioButtonFor(m => m.ChosenCardToken, card.tokenKey, new { id = $"card-{i}", @class = "child-radio", @checked = "checked" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.RadioButtonFor(m => m.ChosenCardToken, card.tokenKey, new { id = $"card-{i}", @class = "child-radio"})
+                                                }
+
+                                                <div class="d-flex">
+                                                    <div class="me-3 ms-3">@card.cardHolderName</div>
+                                                    <div class="me-3">@card.cardNumber</div>
+                                                    <div class="me-3">@card.paymentmethod</div>
+                                                    <div>@card.bankCode</div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex align-items-center pe-2">
+                                            @Html.RadioButtonFor(m => m.PaymentMethod, "3", new { id = "tokenizationPayment", @class = "parent-radio", disabled = "disabled" })
+                                        </div>
+                                        <label for="cardLinkPayment"> 1-click Payment (Tokenization)</label>
+                                        <div>You haven't linked any cards or haven't make first payment by that card</div>
+                                    }
                                 </div>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a type="button" asp-action="Index" class="btn btn-light border">Cancel</a>
-                            <button class="btn btn-success shadow-0 border">Purchase</button>
+                            <a asp-action="Index" class="btn btn-light border">Cancel</a>
+                                <button type="submit">
+                                    Purchase
+                                </button>                   
                         </div>
                     </div>
                 </div>
@@ -98,7 +180,7 @@
                     <h6 class="mb-3">Summary</h6>
                     <div class="d-flex justify-content-between">
                         <p class="mb-2">Total price:</p>
-                        <p class="mb-2">@Model.GetOrderTotal().ToString("c2")</p>
+                            <p class="mb-2" id="initialPrice">@Model.GetOrderTotal().ToString("c2", CultureInfo.CreateSpecificCulture("en-US"))</p>
                     </div>
                     <div class="d-flex justify-content-between">
                         <p class="mb-2">Discount:</p>
@@ -106,12 +188,12 @@
                     </div>
                     <div class="d-flex justify-content-between">
                         <p class="mb-2">Shipping cost:</p>
-                        <p class="mb-2">+ $0.00</p>
+                        <p class="mb-2" id="shippingCost">+ $2.00</p>
                     </div>
                     <hr />
                     <div class="d-flex justify-content-between">
                         <p class="mb-2">Total price:</p>
-                        <p class="mb-2 fw-bold">@Model.GetOrderTotal().ToString("c2")</p>
+                            <p class="mb-2 fw-bold" id="totalPrice">@((Model.GetOrderTotal() + 2).ToString("c2", CultureInfo.CreateSpecificCulture("en-US")))</p>
                     </div>
 
                     <div class="input-group mt-3 mb-4">
@@ -145,4 +227,36 @@
             </div>
         </div>
     </div>
+    </form>
 </section>
+
+@section Scripts{
+    <script>
+        const initialTotalPrice = parseFloat($('#initialPrice').text().replace(/[^\d.-]/g, ''));
+
+        $(document).ready(function () {
+            $(".child-radio").change(function () {
+                $("#tokenizationPayment").prop("checked", true);
+            });
+
+            $(".parent-radio:not(#tokenizationPayment)").change(function () {
+                $(".child-radio").prop("checked", false);
+            });
+        });
+
+        gtag('set', {
+            'merchantId': 'hungvanle321',
+            'orderId': '123'
+        });
+
+        eventLabelDict = {
+            "#body-content > section > form > div > div > div.col-xl-6.mb-4 > div > div > div.d-flex.justify-content-between > button": "Purchase order",
+            "#body-content > section > form > div > div > div.col-xl-6.mb-4 > div > div > div.d-flex.justify-content-between > a": "Back to cart"
+        }
+
+        trackNavigationTime(eventLabelDict);
+        
+    </script>
+
+    
+}

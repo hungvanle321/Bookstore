@@ -4,84 +4,111 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-<ul class="navbar-nav col-6">
-	@if (SignInManager.IsSignedIn(User))
-	{
-		<li class="nav-item dropdown fw-bold">
-			<button class="nav-link text-white fs-5" id="menuDropdownButton">
-				@await Component.InvokeAsync("Avatar")
-			</button>
-			<ul class="dropdown-menu dropdown-menu-end my-0" style="width: 20vw; right:0;" id="userDropdownMenu">
-				<li class="nav-link text-dark ms-3">
-					<span class="me-2 fs-5">
-						@await Component.InvokeAsync("Avatar")
-					</span>
-					
-					@{
-						var name = UserManager.Users.Where(u => User.FindFirst(ClaimTypes.NameIdentifier).Value == u.Id).First().Name;
-						if (name == null)
-							name = UserManager.GetUserName(User);
-					} <span class="fs-5">@name</span>
-				</li>
-				<li><hr class="dropdown-divider mx-4"></li>
-				<li class="nav-item mx-2">
-					<a id="manage" class="dropdown-item nav-link text-dark d-flex align-items-center"
-					   asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
-						<i class="fa fa-cog mx-2 fa-fw border-round" aria-hidden="true"></i>
-						<span>Account Settings</span>
-					</a>
+<ul class="navbar-nav col-8 d-flex justify-content-center">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item dropdown fw-bold">
+            <button class="nav-link text-white fs-5" id="menuDropdownButton">
+                @await Component.InvokeAsync("Avatar")
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end my-0" style="width: 20vw; right:0;" id="userDropdownMenu">
+                <li class="nav-link text-dark ms-3">
+                    <span class="me-2 fs-5">
+                        @await Component.InvokeAsync("Avatar")
+                    </span>
 
-				@if (User.IsInRole(StaticDetails.Role_Admin))
-				{
-				<li class="nav-item dropstart mx-2" id="managementDropdownItem">
-					<a class="dropdown-item nav-link text-dark d-flex justify-content-between align-items-center" role="button">
-						<div class="d-flex align-items-center">
-							<i class="fa fa-list mx-2 fa-fw border-round" aria-hidden="true"></i>
-							<span>Content Management</span>
-						</div>
-						<i class="fa fa-angle-right angle fa-2x me-3" aria-hidden="true"></i>
-					</a>
-				</li>
-				}
-				<li class="nav-item mx-2">
-					<form id="logoutForm" class="dropdown-item nav-link text-dark w-100"
-						  asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-						<button id="logout" type="submit" class="border-0 bg-transparent fw-bold w-100 d-flex justify-content-start align-items-center ">
-							<i class="fa fa-sign-out mx-2 fa-fw border-round" aria-hidden="true"></i>
-							<span>Log Out</span>
-						</button>
-					</form>
-				</li>
-			</ul>
-			<ul class="dropdown-menu dropdown-menu-end" style="width: 20vw; right:0; " id="managementDropdownMenu">
-				<li class="nav-item mx-3 d-flex align-items-center">
-					<a id="returnUserMenu" class="me-2 text-dark" style="cursor: pointer;">
-						<i class="fa fa-angle-left left-angle fa-2x fa-fw" aria-hidden="true"></i>
-					</a>
-					<span class="fs-4 fw-bold">Management</span>
-				</li>
-				<li class="nav-item mx-2 py-2">
-					<a class="dropdown-item nav-link text-dark d-flex align-items-center"
-					   asp-area="Admin" asp-controller="Category" asp-action="Index">
-						<i class="fa fa-tags mx-2 fa-fw border-round" aria-hidden="true"></i>
-						Category
-					</a>
-				</li>
-				<li class="nav-item mx-2">
-					<a class="dropdown-item nav-link text-dark d-flex align-items-center"
-					   asp-area="Admin" asp-controller="Book" asp-action="Index">
-						<i class="fa fa-book mx-2 fa-fw border-round" aria-hidden="true"></i>
-						Book
-					</a>
-				</li>
-			</ul>
-		</li>
-	}
-	else
-	{
-		<li class="nav-item">
-			<a class="d-none d-sm-block nav-link text-dark btn bg-white fw-bold border-3" id="loginButton" asp-area="Identity" asp-page="/Account/Login">Log in</a>
-			<a class="d-block d-sm-none text-white" asp-area="Identity" asp-page="/Account/Login"><i class="bi bi-person-circle"></i></a>
-		</li>
-	}
+                    @{
+                        var name = UserManager.Users.Where(u => User.FindFirst(ClaimTypes.NameIdentifier).Value == u.Id).First().Name;
+                        if (name == null)
+                            name = UserManager.GetUserName(User);
+                    } <span class="fs-5">@name</span>
+                </li>
+                <li><hr class="dropdown-divider mx-4"></li>
+                <li class="nav-item mx-2">
+                    <a id="manage" class="dropdown-item nav-link text-dark d-flex align-items-center" asp-area="Identity" asp-page="/Account/Manage/Index">
+                        <i class="fa fa-cog mx-2 fa-fw border-round" aria-hidden="true"></i>
+                        <span>@Localizer["str_account_settings"]</span>
+                    </a>
+                </li>
+
+                <li class="nav-item dropstart mx-2" id="managementDropdownItem">
+                    <a class="dropdown-item nav-link text-dark d-flex justify-content-between align-items-center" role="button">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-list mx-2 fa-fw border-round" aria-hidden="true"></i>
+                            <span>@Localizer["str_content_management"]</span>
+                        </div>
+                        <i class="fa fa-angle-right angle fa-2x me-3" aria-hidden="true"></i>
+                    </a>
+                </li>
+                <li class="nav-item mx-2">
+                    <form id="logoutForm" class="dropdown-item nav-link text-dark w-100"
+                          asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button id="logout" type="submit" class="border-0 bg-transparent fw-bold w-100 d-flex justify-content-start align-items-center ">
+                            <i class="fa fa-sign-out mx-2 fa-fw border-round" aria-hidden="true"></i>
+                            <span>@Localizer["str_log_out"]</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+            <ul class="dropdown-menu dropdown-menu-end" style="width: 20vw; right:0; " id="managementDropdownMenu">
+                <li class="nav-item mx-3 d-flex align-items-center">
+                    <a id="returnUserMenu" class="me-2 text-dark" style="cursor: pointer;">
+                        <i class="fa fa-angle-left left-angle fa-2x fa-fw" aria-hidden="true"></i>
+                    </a>
+                    <span class="fs-4 fw-bold">@Localizer["str_management"]</span>
+                </li>
+                @if (User.IsInRole(StaticDetails.Role_Admin))
+                {
+                    <li class="nav-item mx-2 py-2">
+                        <a class="dropdown-item nav-link text-dark d-flex align-items-center"
+                           asp-area="Admin" asp-controller="Category" asp-action="Index">
+                            <i class="fa fa-tags mx-2 fa-fw border-round" aria-hidden="true"></i>
+                            @Localizer["str_categories"]
+                        </a>
+                    </li>
+                    <li class="nav-item mx-2 pb-2">
+                        <a class="dropdown-item nav-link text-dark d-flex align-items-center"
+                           asp-area="Admin" asp-controller="Book" asp-action="Index">
+                            <i class="fa fa-book mx-2 fa-fw border-round" aria-hidden="true"></i>
+                            @Localizer["str_books"]
+                        </a>
+                    </li>
+                    <li class="nav-item mx-2 pb-2">
+                        <a class="dropdown-item nav-link text-dark d-flex align-items-center"
+                           asp-area="Admin" asp-controller="Order" asp-action="Index">
+                            <i class="fa fa-pencil-square-o mx-2 fa-fw border-round" aria-hidden="true"></i>
+                            @Localizer["str_orders"]
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item mx-2 py-2">
+                        <a class="dropdown-item nav-link text-dark d-flex align-items-center"
+                           asp-area="Admin" asp-controller="Order" asp-action="Index">
+                            <i class="fa fa-pencil-square-o mx-2 fa-fw border-round" aria-hidden="true"></i>
+                            @Localizer["str_orders"]
+                        </a>
+                    </li>
+                }
+
+                <li class="nav-item mx-2 pb-2">
+                    <a class="dropdown-item nav-link text-dark d-flex align-items-center"
+                       asp-area="Admin" asp-controller="Transaction" asp-action="Index">
+                        <i class="fa fa-money mx-2 fa-fw border-round" aria-hidden="true"></i>
+                        @Localizer["str_transactions"]
+                    </a>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="d-none d-sm-block nav-link text-dark btn bg-white fw-bold border-3" id="loginButton" asp-area="Identity" asp-page="/Account/Login">
+                @Localizer["str_log_in"]
+            </a>
+            <a class="d-block d-sm-none text-white" asp-area="Identity" asp-page="/Account/Login"><i class="bi bi-person-circle"></i></a>
+        </li>
+    }
 </ul>

@@ -16,6 +16,7 @@ namespace Bookstore.DataAccess.Repository.IRepository
         IOrderHeaderRepository OrderHeaderRepo { get; }
         IOrderDetailRepository OrderDetailRepo { get; }
         IApplicationUserRepository ApplicationUserRepo { get; }
-		Task SaveAsync();
+        ITransactionRepository TransactionRepo { get; }
+        Task SaveAsync();
     }
 }

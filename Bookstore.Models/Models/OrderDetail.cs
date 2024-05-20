@@ -12,20 +12,19 @@ namespace Bookstore.Models
     public class OrderDetail
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
         public int OrderHeaderId { get; set; }
         [ForeignKey("OrderHeaderId")]
         [ValidateNever]
-        public OrderHeader OrderHeader { get; set; }
+        public virtual OrderHeader OrderHeader { get; set; }
 
         [Required]
         public int BookId { get; set; }
         [ForeignKey("BookId")]
         [ValidateNever]
-        public Book Book { get; set; }
+        public virtual Book Book { get; set; }
 
         public int Count { get; set; }
         public double Price { get; set; }

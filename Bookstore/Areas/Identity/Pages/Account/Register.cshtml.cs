@@ -29,6 +29,7 @@ namespace Bookstore.Areas.Identity.Pages.Account
 	public class RegisterModel : PageModel
 	{
 		private readonly SignInManager<ApplicationUser> _signInManager;
+		private readonly RoleManager<IdentityRole> _roleManager;
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly IUserStore<ApplicationUser> _userStore;
 		private readonly IUserEmailStore<ApplicationUser> _emailStore;
@@ -37,6 +38,7 @@ namespace Bookstore.Areas.Identity.Pages.Account
 		private readonly IUnitOfWork _unitOfWork;
 		public RegisterModel(
 			UserManager<ApplicationUser> userManager,
+			RoleManager<IdentityRole> roleManager,
 			IUserStore<ApplicationUser> userStore,
 			SignInManager<ApplicationUser> signInManager,
 			ILogger<RegisterModel> logger,
@@ -50,6 +52,7 @@ namespace Bookstore.Areas.Identity.Pages.Account
 			_logger = logger;
 			_emailSender = emailSender;
 			_unitOfWork = unitOfWork;
+			_roleManager = roleManager;
 		}
 
 		/// <summary>
@@ -116,8 +119,7 @@ namespace Bookstore.Areas.Identity.Pages.Account
 
 
 		public async Task OnGetAsync(string returnUrl = null)
-		{
-
+		{	
 			Input = new();
 			ReturnUrl = returnUrl;
 			ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();

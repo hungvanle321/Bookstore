@@ -1,0 +1,33 @@
+﻿@{
+	ViewData["Title"] = "Order Management";
+}
+<div class="container pb-3">
+	<div class="row pt-4 pb-2">
+		<div class="col-5 col-sm-6">
+			<h2 class="text-dark">Order List</h2>
+		</div>
+	</div>
+	<table id="orderTable" class="table hover">
+		<thead>
+			<tr>
+				<th>Customer</th>
+				<th>ID</th>
+				<th>Order Date</th>
+				<th>Order Status</th>
+				<th>Payment Status</th>
+				<th>Order Total</th>
+				<th></th>
+			</tr>
+		</thead>
+	</table>
+</div>
+
+@section Scripts{
+	<script src="~/js/orderDataTable.js"></script>
+	<script>
+		$(function () {
+			$('[data-toggle="tooltip"]').tooltip();
+		});
+	</script>
+}
+

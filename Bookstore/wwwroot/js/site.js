@@ -10,6 +10,51 @@ function responsive_change_box_order() {
 	}
 }
 
+function generateRandomString(length) {
+	let result = '';
+	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+	for (let i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * characters.length));
+	}
+
+	return result;
+}
+
+function trackNavigationTime(eventLabelDict) {
+	var startTime;
+	var eventLabel;
+	$.each(eventLabelDict, function (selector, eventLabelValue) {
+		$(selector).on('click', function (event) {
+			startTime = new Date().getTime();
+			eventLabel = eventLabelValue;
+			localStorage.setItem('startTime', startTime);
+			localStorage.setItem('eventLabel', eventLabel);
+		});
+	});
+
+	$(window).on('beforeunload', function (event) {
+		var storedStartTime = localStorage.getItem('startTime');
+		var storedEventLabel = localStorage.getItem('eventLabel');
+
+		if (storedStartTime && storedEventLabel) {
+			var endTime = new Date().getTime();
+			var navigationTime = endTime - parseInt(storedStartTime);
+			console.log(navigationTime)
+			gtag('event', 'record_response_time', {
+				'event_label': storedEventLabel,
+				'page_response_time': navigationTime,
+				'page_path': window.location.pathname,
+				'merchantId': generateRandomString(3),
+				'orderId': generateRandomString(4)
+			});
+
+			localStorage.removeItem('startTime');
+			localStorage.removeItem('eventLabel');
+		}
+	});
+}
+
 responsive_change_box_order();
 
 /* Search input events */
@@ -97,7 +142,6 @@ $(document).ready(function () {
 	$('#searchStringInput').focus(function () {
 		var searchText = $('#searchStringInput').val();
 		if (searchText != "") {
-			console.log(0);
 			suggestMenu.css("display", "block");
 		}
 	});
@@ -108,9 +152,6 @@ $(document).ready(function () {
 		}
 	});
 });
-
-
-
 
 /* User icon events */
 

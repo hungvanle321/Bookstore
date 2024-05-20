@@ -1,6 +1,6 @@
 ﻿@{
-	ViewData["Title"] = "Home Page";
-	ViewData["NavTab"] = "Home";
+	ViewData["Title"] = Localizer["home_page_title"];
+	ViewData["NavTab"] = Localizer["nav_home"];
 }
 <div class="landing-page">
 	<div id="myCarousel" class="carousel slide banner-main" data-bs-ride="carousel">
@@ -9,13 +9,13 @@
 				<img class="first-slide" src="~/images/home_banner/banner1.jpg" alt="First slide">
 				<div class="container">
 					<div class="carousel-caption relative col-8">
-						<h1 class="d-none d-md-block">Embark on a Literary Journey</h1>
+						<h1 class="d-none d-md-block">@Localizer["embark_on_a_literary_journey"]</h1>
 						<p class="d-none d-lg-block">
-							Step into our bookstore and embark on a literary journey. <br>
-							Discover new worlds, meet fascinating characters, and explore intriguing stories. <br>
-							Our books are your passport to countless adventures.
+							@Localizer["step_into_our_bookstore"] <br>
+							@Localizer["discover_new_worlds"] <br>
+							@Localizer["books_passport_adventures"]
 						</p>
-						<a class="discover-btn" asp-controller="Home" asp-action="Books">Discover</a>
+						<a class="discover-btn" asp-controller="Home" asp-action="Books">@Localizer["discover"]</a>
 					</div>
 				</div>
 			</div>
@@ -23,12 +23,12 @@
 				<img class="second-slide" src="~/images/home_banner/banner2.jpg" alt="Second slide">
 				<div class="container">
 					<div class="carousel-caption relative col-8">
-						<h1 class="d-none d-md-block">Unleash Your Imagination with Our New Arrivals</h1>
+						<h1 class="d-none d-md-block">@Localizer["unleash_imagination_new_arrivals"]</h1>
 						<p class="d-none d-lg-block">
-							Every week, we bring in a fresh selection of books for you to explore. <br>
-							Unleash your imagination with the latest bestsellers, critically acclaimed novels, and undiscovered gems.
+							@Localizer["fresh_selection_books"] <br>
+							@Localizer["unleash_imagination_bestsellers"]
 						</p>
-						<a class="discover-btn" asp-controller="Home" asp-action="Books">Discover</a>
+						<a class="discover-btn" asp-controller="Home" asp-action="Books">@Localizer["discover"]</a>
 					</div>
 				</div>
 			</div>
@@ -36,12 +36,12 @@
 				<img class="third-slide" src="~/images/home_banner/banner3.jpg" alt="Third slide">
 				<div class="container">
 					<div class="carousel-caption relative col-8">
-						<h1 class="d-none d-md-block">We Deliver Your Favorite Books to Your Doorstep</h1>
+						<h1 class="d-none d-md-block">@Localizer["deliver_books_doorstep"]</h1>
 						<p class="d-none d-lg-block">
-							Enjoy the convenience of getting your favorite books delivered right to your doorstep. <br>
-							With our free city-wide delivery service, you can stay in the comfort of your home and still indulge in your love for reading.
+							@Localizer["free_city_wide_delivery"] <br>
+							@Localizer["comfort_of_home"]
 						</p>
-						<a class="discover-btn" asp-controller="Home" asp-action="Books">Discover</a>
+						<a class="discover-btn" asp-controller="Home" asp-action="Books">@Localizer["discover"]</a>
 					</div>
 				</div>
 			</div>
@@ -49,12 +49,12 @@
 				<img class="third-slide" src="~/images/home_banner/banner4.jpg" alt="Fourth slide">
 				<div class="container">
 					<div class="carousel-caption relative col-8">
-						<h1 class="d-none d-md-block">Gift a Book - Gift Knowledge</h1>
+						<h1 class="d-none d-md-block">@Localizer["gift_book_gift_knowledge"]</h1>
 						<p class="d-none d-lg-block">
-							Looking for the perfect gift? Give the gift of knowledge with our wide range of books. <br>
-							From thrilling mysteries to insightful biographies, you`ll find the perfect book for everyone on your list.
+							@Localizer["perfect_gift_knowledge"] <br>
+							@Localizer["thrilling_mysteries"]
 						</p>
-						<a class="discover-btn" asp-controller="Home" asp-action="Books">Discover</a>
+						<a class="discover-btn" asp-controller="Home" asp-action="Books">@Localizer["discover"]</a>
 					</div>
 				</div>
 			</div>
@@ -66,12 +66,12 @@
 			<span class="carousel-control-next-icon" aria-hidden="true"></span>
 		</a>
 	</div>
-	<div class="bg-white text-center py-5">
+	<div class="text-center py-5">
 		<div class="py-2">
-			<h2 class="fw-bolder lh-base">To access our service<br />you need to know some issues</h2>
+			<h2 class="fw-bolder lh-base">@Localizer["access_service"]</h2>
 		</div>
 		<div>
-			<h3 class="lh-base">Bookselling is the commercial trading of books which is the retail <br /> and distribution end of the publishing process.</h3>
+			<h3 class="lh-base">@Localizer["bookselling_commercial"]</h3>
 		</div>
 		<div class="d-sm-flex justify-content-center py-3">
 			<div class="col-10 offset-1 offset-sm-0 col-sm-3">
@@ -79,10 +79,10 @@
 					<div class="criteria-icons" style="background-color: #f5566e;"><i class="fa fa-truck" aria-hidden="true"></i></div>
 				</div>
 				<div class="py-2">
-					<h3 class="fw-bold">Book Quality</h3>
+					<h3 class="fw-bold">@Localizer["book_quality"]</h3>
 				</div>
-				<h3 class ="lh-base text-justify">
-					We pride ourselves on offering high-quality books from reputable publishers.
+				<h3 class="lh-base text-justify">
+					@Localizer["high_quality_books"]
 				</h3>
 			</div>
 			<div class="col-10 offset-1 col-sm-3">
@@ -90,22 +90,22 @@
 					<div class="criteria-icons" style="background-color: #f8b80d;"><i class="fa fa-money" aria-hidden="true"></i></div>
 				</div>
 				<div class="py-2">
-					<h3 class="fw-bold">Competitive Pricing</h3>
+					<h3 class="fw-bold">@Localizer["competitive_pricing"]</h3>
 				</div>
 				<h3 class="lh-base">
-					Reasonable and competitive prices, suitable for all customer segments.
+					@Localizer["reasonable_prices"]
 				</h3>
 			</div>
 			<div class="col-10 offset-1 col-sm-3">
 				<div class="d-flex justify-content-center py-2">
 					<div class="criteria-icons" style="background-color: #7cc0ab;"><i class="fa fa-users" aria-hidden="true"></i></div>
 				</div>
-				
+
 				<div class="py-2">
-					<h3 class="fw-bold">Dedicated Customer Service</h3>
+					<h3 class="fw-bold">@Localizer["dedicated_customer_service"]</h3>
 				</div>
 				<h3 class="lh-base">
-					24/7 customer service, always ready to answer your questions.
+					@Localizer["customer_service_24_7"]
 				</h3>
 			</div>
 		</div>
@@ -117,16 +117,16 @@
 	@await Component.InvokeAsync("LandingPageBooks", StaticDetails.LandingPage_ScienceFiction)
 	@await Component.InvokeAsync("LandingPageBooks", StaticDetails.LandingPage_Romance)
 	<div class="py-4 signup text-center">
-		<h1 class="fw-bolder pb-4 text-uppercase">Sign up <br/> for our Newsletter</h1>
-		<div class="pb-4">We'll give you just the right amount of love! <br /> Sign up for our weekly update and be the first to know about our newest plan.</div>
+		<h1 class="fw-bolder pb-4 text-uppercase">@Localizer["sign_up_newsletter"]</h1>
+		<div class="pb-4">@Localizer["weekly_update"]</div>
 		<div class="d-flex justify-content-center align-items-center pb-4">
-			<div class="d-none d-sm-block me-sm-3">Email address</div>
+			<div class="d-none d-sm-block me-sm-3">@Localizer["email_address"]</div>
 			<input type="email" class="col-6 col-sm-3 me-3" placeholder="abc@gmail.com">
-			<button>SIGN UP</button>
+			<button>@Localizer["sign_up"]</button>
 		</div>
-
 	</div>
 </div>
+
 
 @section Scripts{
 	<script>
@@ -146,5 +146,12 @@
 				}
 			});
 		});
+
+		eventLabelDict = {
+			"#cartIcon": "Navigate from homepage to cart page",
+			"#navbarContent > li:nth-child(2) > a": "Navigate from homepage to books page"
+		}
+
+		trackNavigationTime(eventLabelDict);
 	</script>
 }

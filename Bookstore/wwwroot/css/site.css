@@ -472,11 +472,18 @@ nav #logoutForm {
             background-color: white;
         }
 
-/*---------------------------Books page---------------------------------------*/
-.books_page .card a,
-.detail_page button {
-    transition: transform 0.3s ease-in-out;
+[data-bs-theme=dark] .landing-page {
+    background-color: #212529;
 }
+
+    [data-bs-theme=dark] h2, [data-bs-theme=dark] h3 {
+        color: white;
+    }
+    /*---------------------------Books page---------------------------------------*/
+    .books_page .card a,
+    .detail_page button {
+        transition: transform 0.3s ease-in-out;
+    }
 
 .books_page .card a:hover,
 .detail_page button:hover {
@@ -882,3 +889,5 @@ nav #logoutForm {
     background-color: transparent !important;
     border-color: black;
 }
+
+/*------------------------------------------Checkout Page------------------------------------*/

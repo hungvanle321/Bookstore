@@ -7,9 +7,10 @@ using Bookstore.Models.ViewModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc.Routing;
 using SmartBreadcrumbs.Attributes;
 using SmartBreadcrumbs.Nodes;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Localization;
 
 namespace Bookstore.Areas.Customer.Controllers
 {
@@ -19,11 +20,13 @@ namespace Bookstore.Areas.Customer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IStringLocalizer<HomeController> _localization;
 
-		public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
+		public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, IStringLocalizer<HomeController> languageService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+			_localization = languageService;
         }
 		
 		public IActionResult Index()
@@ -264,5 +267,16 @@ namespace Bookstore.Areas.Customer.Controllers
 		{
 			return View();
 		}
+
+		#region Localization
+		public IActionResult ChangeLanguage(string culture)
+		{
+			Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)), new CookieOptions()
+			{
+				Expires = DateTimeOffset.UtcNow.AddDays(2)
+			});
+			return Redirect(Request.Headers["Referer"].ToString());
+		}
+		#endregion
 	}
 }

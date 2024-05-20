@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="home_page_title" xml:space="preserve">
+    <value>Trang Chủ</value>
+  </data>
+  <data name="embark_on_a_literary_journey" xml:space="preserve">
+    <value>Bắt đầu cuộc hành trình văn học</value>
+  </data>
+  <data name="step_into_our_bookstore" xml:space="preserve">
+    <value>Bước vào hiệu sách của chúng tôi và bắt đầu cuộc hành trình văn học.</value>
+  </data>
+  <data name="discover_new_worlds" xml:space="preserve">
+    <value>Khám phá thế giới mới, gặp gỡ những nhân vật hấp dẫn và khám phá những câu chuyện thú vị.</value>
+  </data>
+  <data name="books_passport_adventures" xml:space="preserve">
+    <value>Những cuốn sách của chúng tôi là hộ chiếu của bạn đến vô số cuộc phiêu lưu.</value>
+  </data>
+  <data name="unleash_imagination_new_arrivals" xml:space="preserve">
+    <value>Giải phóng trí tưởng tượng của bạn với những cuốn sách mới về</value>
+  </data>
+  <data name="fresh_selection_books" xml:space="preserve">
+    <value>Mỗi tuần, chúng tôi mang đến một tuyển chọn mới những cuốn sách để bạn khám phá.</value>
+  </data>
+  <data name="unleash_imagination_bestsellers" xml:space="preserve">
+    <value>Giải phóng trí tưởng tượng của bạn với những cuốn sách bán chạy nhất, tiểu thuyết được đánh giá cao và những viên ngọc chưa được khám phá.</value>
+  </data>
+  <data name="deliver_books_doorstep" xml:space="preserve">
+    <value>Chúng tôi giao những cuốn sách yêu thích của bạn đến tận nhà</value>
+  </data>
+  <data name="free_city_wide_delivery" xml:space="preserve">
+    <value>Thưởng thức sự tiện lợi của việc nhận những cuốn sách yêu thích của bạn được giao đến tận nhà.</value>
+  </data>
+  <data name="comfort_of_home" xml:space="preserve">
+    <value>Với dịch vụ giao hàng miễn phí trên toàn thành phố, bạn có thể ở nhà và vẫn tận hưởng niềm đam mê đọc sách.</value>
+  </data>
+  <data name="discover" xml:space="preserve">
+    <value>Khám phá</value>
+  </data>
+  <data name="gift_book_gift_knowledge" xml:space="preserve">
+    <value>Tặng sách - Tặng tri thức</value>
+  </data>
+  <data name="perfect_gift_knowledge" xml:space="preserve">
+    <value>Tìm kiếm món quà hoàn hảo? Hãy tặng món quà tri thức với nhiều loại sách của chúng tôi.</value>
+  </data>
+  <data name="thrilling_mysteries" xml:space="preserve">
+    <value>Từ những câu chuyện trinh thám ly kỳ đến những cuốn tiểu sử đầy hiểu biết, bạn sẽ tìm thấy cuốn sách hoàn hảo cho mọi người trong danh sách của mình.</value>
+  </data>
+  <data name="access_service" xml:space="preserve">
+    <value>Để truy cập dịch vụ của chúng tôi, bạn cần biết một số thông tin</value>
+  </data>
+  <data name="bookselling_commercial" xml:space="preserve">
+    <value>Buôn bán sách là việc kinh doanh thương mại sách, là phần cuối của quá trình xuất bản và phân phối.</value>
+  </data>
+  <data name="book_quality" xml:space="preserve">
+    <value>Chất lượng sách</value>
+  </data>
+  <data name="high_quality_books" xml:space="preserve">
+    <value>Chúng tôi tự hào cung cấp những cuốn sách chất lượng cao từ các nhà xuất bản có uy tín.</value>
+  </data>
+  <data name="competitive_pricing" xml:space="preserve">
+    <value>Giá cả cạnh tranh</value>
+  </data>
+  <data name="reasonable_prices" xml:space="preserve">
+    <value>Giá cả hợp lý và cạnh tranh, phù hợp với mọi phân khúc khách hàng.</value>
+  </data>
+  <data name="dedicated_customer_service" xml:space="preserve">
+    <value>Dịch vụ khách hàng tận tâm</value>
+  </data>
+  <data name="customer_service_24_7" xml:space="preserve">
+    <value>Dịch vụ khách hàng 24/7, luôn sẵn sàng trả lời câu hỏi của bạn.</value>
+  </data>
+  <data name="sign_up_newsletter" xml:space="preserve">
+    <value>Đăng ký nhận bản tin của chúng tôi</value>
+  </data>
+  <data name="weekly_update" xml:space="preserve">
+    <value>Chúng tôi sẽ gửi đến bạn những thông tin vừa đủ! Đăng ký nhận bản tin hàng tuần và là người đầu tiên biết về kế hoạch mới nhất của chúng tôi.</value>
+  </data>
+  <data name="email_address" xml:space="preserve">
+    <value>Địa chỉ email</value>
+  </data>
+  <data name="sign_up" xml:space="preserve">
+    <value>ĐĂNG KÝ</value>
+  </data>
+  <data name="nav_home" xml:space="preserve">
+    <value>Trang chủ</value>
+  </data>
+</root>

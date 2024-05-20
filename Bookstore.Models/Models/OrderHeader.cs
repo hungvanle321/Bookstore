@@ -12,12 +12,11 @@ namespace Bookstore.Models
     public class OrderHeader
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string ApplicationUserId { get; set; }
         [ForeignKey("ApplicationUserId")]
         [ValidateNever]
-        public ApplicationUser ApplicationUser { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
 
         public DateTime OrderDate { get; set; }
         public DateTime ShippingDate { get; set; }
@@ -27,11 +26,6 @@ namespace Bookstore.Models
         public string? PaymentStatus { get; set; }
         public string? TrackingNumber { get; set; }
         public string? Carrier {  get; set; }
-
-        public DateTime PaymentDate { get; set; }
-        public DateTime PaymentDueDate { get; set; }
-        public string? PaymentIntentId { get; set; }
-
         [Required]
         public string ShipPhoneNumber { get; set; }
         [Required]
@@ -41,6 +35,14 @@ namespace Bookstore.Models
         public string ShipEmail { get; set; }
         [Required]
         public string ShipAddress { get; set; }
+        [Required]
+        public string ShipCity { get; set; }
+        [Required]
+        public string ShipCountry { get; set; }
+        [Required]
+        public string ShipState { get; set; }
+        public string Description { get; set; }
+        public string PostalCode { get; set; }
 
     }
 }

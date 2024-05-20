@@ -1,0 +1,33 @@
+﻿@{
+	ViewData["Title"] = "Transaction";
+}
+<div class="container pb-3">
+	<div class="row pt-4 pb-2">
+		<div class="col-5 col-sm-6">
+			<h2 class="text-dark">Transaction Info</h2>
+		</div>
+	</div>
+	<table id="transactionTable" class="table hover">
+		<thead>
+			<tr>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>
+			</tr>
+		</thead>
+	</table>
+</div>
+
+@section Scripts{
+	<script src="~/js/transactionDataTable.js"></script>
+	<script>
+		$(function () {
+			$('[data-toggle="tooltip"]').tooltip();
+		});
+	</script>
+}
+

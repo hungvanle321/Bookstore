@@ -22,7 +22,7 @@ namespace Bookstore.Models
 		public int LanguageId { get; set; }
 		[ForeignKey("LanguageId")]
 		[ValidateNever]
-		public Language Language { get; set; }
+		public virtual Language Language { get; set; }
 
 		[Required(ErrorMessage = "Please enter number of pages")]
 		[Display(Name = "Number of pages")]

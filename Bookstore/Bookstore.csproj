@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\images\favicon.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.25" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.25" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.25" />
@@ -31,16 +27,6 @@
     <ProjectReference Include="..\Bookstore.DataAccess\Bookstore.DataAccess.csproj" />
     <ProjectReference Include="..\Bookstore.Models\Bookstore.Models.csproj" />
     <ProjectReference Include="..\Bookstore.Utility\Bookstore.Utility.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\images\book\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="Areas\Identity\Pages\Account\Manage\_Layout.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
 </Project>
